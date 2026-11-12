@@ -1,0 +1,23 @@
+{
+  "name": "ui-workflow",
+  "private": true,
+  "type": "module",
+  "description": "Reference-grounded, model-agnostic mobile UI generation workflow on Astryx",
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "palette": "node scripts/palette.mjs",
+    "gate": "node scripts/gate.mjs"
+  },
+  "dependencies": {
+    "@astryxdesign/cli": "0.7.14",
+    "@astryxdesign/core": "0.7.14",
+    "@stylexjs/stylex": "^0.19.0",
+    "lucide-react": "^1.72.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "axe-core": "^4.10.0"
+  }
+}

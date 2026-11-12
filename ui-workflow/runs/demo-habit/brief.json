@@ -1,0 +1,18 @@
+{
+  "product": "一个帮人坚持每日小习惯的打卡 app",
+  "category": "habit tracker",
+  "platform": "ios",
+  "locale": "zh-CN",
+  "audience": "想养成 3–6 个日常习惯的上班族，每天打开 1–2 次，每次不到一分钟",
+  "core_tasks": ["把今天做完的习惯勾掉", "看一眼今天还剩几个", "知道自己连续坚持了多久"],
+  "screens": [
+    {
+      "id": "today",
+      "purpose": "今天要做的习惯清单，打开就能勾",
+      "primary_action": "勾选完成一个习惯",
+      "search_terms": ["home", "today", "checklist", "habit list", "streak"]
+    }
+  ],
+  "function_refs": {"min_apps_per_screen": 3, "seed_apps": []},
+  "style_source": {"mode": "preset", "value": "手写示例主题（冒烟测试：此环境连不上 Mobbin，未做风格提炼）"}
+}

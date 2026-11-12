@@ -1,0 +1,50 @@
+{
+  "screen_id": "today",
+  "purpose": "今天要做的习惯清单，打开就能勾",
+  "primary_action": {"label": "勾选完成", "region": "habit-list"},
+  "frame": {"header": "large-title", "navigation": "bottom-tabs", "tabs": ["今天", "统计", "我的"], "active_tab": "今天"},
+  "regions": [
+    {
+      "id": "day-header",
+      "role": "告诉用户今天是哪天，并提供新建入口",
+      "content_shape": ["title", "time", "action"],
+      "components": ["Heading", "Text", "IconButton"],
+      "priority": "tertiary",
+      "notes": "无参考模式。新建是低频操作，放右上角，用 ghost，不抢主操作"
+    },
+    {
+      "id": "day-progress",
+      "role": "一眼看到今天完成了几个、还剩几个",
+      "content_shape": ["value", "ratio"],
+      "components": ["Card", "ProgressBar", "Text"],
+      "priority": "secondary",
+      "notes": "无参考模式。对应 core_tasks 第 2 条。是一个独立对象，所以用 Card"
+    },
+    {
+      "id": "habit-list",
+      "role": "逐个勾掉今天的习惯；每行带连续天数",
+      "content_shape": ["collection", "boolean", "value"],
+      "components": ["List", "ListItem", "CheckboxInput"],
+      "priority": "primary",
+      "optional_slots_on": ["description"],
+      "notes": "无参考模式。同类一组 → 行，不用卡片。description 打开是因为连续天数对应 core_tasks 第 3 条"
+    }
+  ],
+  "states": ["default"],
+  "sample_data": {
+    "date": "11月12日 星期四",
+    "done": 3,
+    "total": 5,
+    "habits": [
+      {"name": "喝够 8 杯水", "streak": 21, "done": true},
+      {"name": "晨间拉伸 10 分钟", "streak": 6, "done": true},
+      {"name": "读 20 页书", "streak": 134, "done": true},
+      {"name": "睡前不看手机，把它放到客厅充电", "streak": 0, "done": false},
+      {"name": "背 15 个单词", "streak": 2, "done": false}
+    ]
+  },
+  "gaps": [
+    {"shape": "底部标签栏", "fallback": "shell/MobileShell：LayoutFooter + TabList layout=fill"},
+    {"shape": "确定值的环形进度", "fallback": "ProgressBar"}
+  ]
+}

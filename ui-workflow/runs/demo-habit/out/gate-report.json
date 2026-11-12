@@ -1,0 +1,16 @@
+{
+  "run": "runs/demo-habit",
+  "passed": true,
+  "summary": {
+    "pass": 12,
+    "warn": 1,
+    "fail": 0
+  },
+  "items": [
+    {
+      "level": "warn",
+      "check": "refs",
+      "message": "无参考模式：refs/shots 是空的。产出只受组件库和风格约束，没有真实产品的结构依据"
+    }
+  ]
+}

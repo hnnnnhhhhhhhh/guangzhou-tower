@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Screen spec — 一屏的结构合同（阶段 4 产物，阶段 5 只照它搭）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["screen_id", "purpose", "primary_action", "frame", "regions", "states", "sample_data"],
+  "properties": {
+    "screen_id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+    "purpose": {"type": "string"},
+    "primary_action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "region"],
+      "properties": {
+        "label": {"type": "string"},
+        "region": {"type": "string", "description": "主操作所在的 region id"}
+      }
+    },
+    "frame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["header", "navigation"],
+      "properties": {
+        "header": {"enum": ["none", "large-title", "compact-title", "search", "custom"]},
+        "navigation": {"enum": ["bottom-tabs", "top-tabs", "drawer", "stack-only", "none"]},
+        "tabs": {"type": "array", "maxItems": 5, "items": {"type": "string"}},
+        "active_tab": {"type": "string"}
+      }
+    },
+    "regions": {
+      "type": "array", "minItems": 1, "maxItems": 7,
+      "description": "一屏最多 7 个区。超过说明该拆屏",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "role", "content_shape", "components", "priority"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+          "role": {"type": "string"},
+          "content_shape": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "components": {
+            "type": "array", "minItems": 1, "items": {"type": "string"},
+            "description": "Astryx 组件名，必须出自 `npx astryx component --list`"
+          },
+          "priority": {"enum": ["primary", "secondary", "tertiary"]},
+          "optional_slots_on": {"type": "array", "items": {"type": "string"}, "description": "默认关闭的可选信息里，这次打开了哪些，各自的理由写在 notes"},
+          "evidence": {"type": "array", "items": {"type": "string"}, "description": "支撑这个区的 analysis id；无参考模式下为空"},
+          "notes": {"type": "string"}
+        }
+      }
+    },
+    "states": {
+      "type": "array", "minItems": 1,
+      "items": {"enum": ["default", "empty", "loading", "error", "all-done"]},
+      "description": "本屏需要交付哪些状态。至少 default"
+    },
+    "sample_data": {
+      "type": "object",
+      "description": "真实感的样例数据（长文本、0、极大值各来一个），阶段 5 原样使用，不许临场编"
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["shape", "fallback"],
+        "properties": {
+          "shape": {"type": "string"},
+          "fallback": {"type": "string", "description": "用哪几个现有组件组合代替"}
+        }
+      },
+      "description": "Astryx 里没有对应组件的形状"
+    }
+  }
+}
