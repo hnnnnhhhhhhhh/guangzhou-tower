@@ -93,7 +93,7 @@ export function Study({state, update, onQuit, onDone}: {state: State; update: (f
 
       {/* region: card */}
       <Deck depth={queue.length - 1} cardKey={`${id}-${turn}`}>
-        <SoftCard pad="lg" tall>
+        <SoftCard tall>
           <Row>
             <Chips>
               <Chip kind="dashed" hue={isReview ? 'blue' : 'amber'}>

@@ -1,6 +1,11 @@
-/* 视觉配方的样式。数值全部来自下面这组变量；每个 run 可以在 style/visual.css 里覆盖它们。
-   默认值量自 ABY Journal 的高清截图（runs/pte-vocab/style/）。 */
+/* 视觉配方的样式。
+   规范来自组件库：间距和圆角直接用 Astryx 的刻度（--spacing-*：4px 一档；--radius-*），这里不许出现刻度以外的数。
+   配方只在这套规范之上加“材质”：阴影、模糊、渐隐、色调。
+   每个 run 可以在 style/visual.css 里覆盖下面 :root 里的变量；:root 之外不允许写死尺寸（门禁会查）。 */
+@import '@astryxdesign/core/astryx.css';
+
 :root {
+  /* —— 颜色与材质（量自 ABY Journal 的高清截图） —— */
   --rx-ground: #f1f1f2;
   --rx-surface: #ffffff;
   --rx-surface-sunk: #f4f4f5;
@@ -8,24 +13,54 @@
   --rx-ink-2: #6b6b70;
   --rx-ink-3: #85858a;
   --rx-line: rgba(17, 17, 18, 0.08);
-  --rx-radius-card: 30px;
-  --rx-radius-inner: 18px;
-  --rx-gutter: 20px;
-  /* 三层叠出来的“柔”：贴边一条细影 + 中距离 + 大范围弥散 */
   --rx-shadow-soft: 0 0.5px 1px rgba(17, 17, 18, 0.04), 0 6px 18px rgba(17, 17, 18, 0.045), 0 22px 56px rgba(17, 17, 18, 0.07);
   --rx-shadow-float: 0 1px 2px rgba(17, 17, 18, 0.05), 0 12px 32px rgba(17, 17, 18, 0.1), 0 32px 72px rgba(17, 17, 18, 0.1);
   --rx-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.9);
   --rx-blur: 22px;
+  --rx-blob: 320px;
+  --rx-hairline: 1.5px;
   --rx-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  /* 小面积彩色：每种只给出色相，深浅由配方自己算 */
   --rx-hue-blue: 222;
   --rx-hue-green: 150;
   --rx-hue-amber: 42;
   --rx-hue-rose: 8;
   --rx-hue-violet: 268;
+
+  /* —— 版式规范：全部落在 Astryx 的 4px 刻度上 —— */
+  --rx-gutter: var(--spacing-5); /* 屏幕左右边距 20 */
+  --rx-pad: var(--spacing-6); /* 所有卡片同一个内边距 24：不同卡片里的文字左缘对齐 */
+  --rx-gap-tight: var(--spacing-1); /* 一组里的主副文字 4 */
+  --rx-gap-item: var(--spacing-2); /* 同类小元素之间 8 */
+  --rx-gap-inner: var(--spacing-4); /* 卡片里的块与块 16 */
+  --rx-gap-card: var(--spacing-4); /* 卡片与卡片 16 */
+  --rx-gap-section: var(--spacing-8); /* 标题与内容、区与区 32 */
+  --rx-radius-card: var(--radius-page); /* 28 */
+  --rx-radius-inner: var(--radius-container); /* 12 */
+  --rx-radius-pill: var(--radius-full);
+  /* 控件高度：三档 */
+  --rx-h-chip: var(--spacing-8); /* 32 */
+  --rx-h-chip-lg: var(--spacing-10); /* 40 */
+  --rx-h-touch: var(--spacing-11); /* 44：所有可点的东西的下限 */
+  --rx-h-primary: calc(var(--spacing-7) * 2); /* 56 */
+
+  /* —— 字阶：手机上以 17 为正文，七档，每档字号和行高成对使用 —— */
+  --rx-fs-caption: 0.8125rem; /* 13 */
+  --rx-lh-caption: 1.125rem; /* 18 */
+  --rx-fs-sm: 0.9375rem; /* 15 */
+  --rx-lh-sm: 1.25rem; /* 20 */
+  --rx-fs-body: 1.0625rem; /* 17 */
+  --rx-lh-body: 1.5rem; /* 24 */
+  --rx-fs-lg: 1.25rem; /* 20 */
+  --rx-lh-lg: 1.75rem; /* 28 */
+  --rx-fs-title: 1.75rem; /* 28 */
+  --rx-lh-title: 2rem; /* 32 */
+  --rx-fs-display: 2.75rem; /* 44 */
+  --rx-lh-display: 3rem; /* 48 */
+  --rx-fs-hero: 3.5rem; /* 56 */
+  --rx-lh-hero: 3.5rem; /* 56 */
 }
 
-/* ---------- Ground：带色调的底 + 远处的虚化色团 ---------- */
+/* ---------- Screen ---------- */
 .rx-ground {
   position: relative;
   min-height: 100dvh;
@@ -33,29 +68,27 @@
   color: var(--rx-ink);
   overflow: hidden;
   isolation: isolate;
+  font-size: var(--rx-fs-body);
+  line-height: var(--rx-lh-body);
 }
 .rx-ground-blob {
   position: absolute;
   z-index: -1;
+  width: var(--rx-blob);
+  height: var(--rx-blob);
   border-radius: 50%;
   filter: blur(60px);
   opacity: 0.55;
   pointer-events: none;
 }
 .rx-ground-blob[data-at='top'] {
-  inset: -120px -80px auto auto;
-  width: 320px;
-  height: 320px;
+  inset: calc(var(--rx-blob) / -3) calc(var(--rx-blob) / -4) auto auto;
   background: radial-gradient(circle, hsl(var(--rx-blob-hue, 222) 90% 88%), transparent 70%);
 }
 .rx-ground-blob[data-at='bottom'] {
-  inset: auto auto -140px -100px;
-  width: 360px;
-  height: 360px;
+  inset: auto auto calc(var(--rx-blob) / -2.5) calc(var(--rx-blob) / -3);
   background: radial-gradient(circle, hsl(var(--rx-blob-hue-2, 42) 95% 88%), transparent 70%);
 }
-
-/* ---------- Screen：一屏的骨架（滚动区 + 底部浮层） ---------- */
 .rx-screen {
   display: flex;
   flex-direction: column;
@@ -65,34 +98,38 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: calc(env(safe-area-inset-top, 0px) + 28px) var(--rx-gutter) 0;
+  padding: calc(env(safe-area-inset-top, 0px) + var(--spacing-6)) var(--rx-gutter) var(--spacing-8);
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: var(--rx-gap-card);
   scrollbar-width: none;
 }
 .rx-screen-scroll[data-dock='true'] {
-  /* 内容滑到浮层后面时渐隐，而不是被硬切 */
-  mask-image: linear-gradient(to bottom, #000 calc(100% - 72px), transparent);
-  padding-bottom: 96px;
-}
-.rx-screen-scroll[data-dock='false'] {
-  padding-bottom: 32px;
+  mask-image: linear-gradient(to bottom, #000 calc(100% - var(--spacing-12) * 1.5), transparent);
+  padding-bottom: calc(var(--spacing-12) * 2);
 }
 .rx-dock {
   position: relative;
-  padding: 0 var(--rx-gutter) calc(env(safe-area-inset-bottom, 0px) + 20px);
-  margin-top: -24px;
+  padding: 0 var(--rx-gutter) calc(env(safe-area-inset-bottom, 0px) + var(--spacing-5));
+  margin-top: calc(var(--spacing-6) * -1);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 
-/* ---------- TwoToneTitle：同字号，一灰一黑叠两行 ---------- */
+/* ---------- TwoToneTitle ---------- */
+.rx-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  /* 标题下方是“区”的间距：卡间距 + 这里补足到 32 */
+  margin-bottom: calc(var(--rx-gap-section) - var(--rx-gap-card));
+}
 .rx-title {
   margin: 0;
-  font-size: 30px;
-  line-height: 1.12;
+  font-size: var(--rx-fs-title);
+  line-height: var(--rx-lh-title);
   letter-spacing: -0.02em;
   font-weight: 600;
   color: var(--rx-ink);
@@ -102,36 +139,28 @@
   color: var(--rx-ink-3);
   font-weight: 500;
 }
-.rx-title-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-}
 
-/* ---------- SoftCard：白、厚、软 ---------- */
+/* ---------- SoftCard ---------- */
 .rx-card {
   position: relative;
   background: var(--rx-surface);
   border-radius: var(--rx-radius-card);
   box-shadow: var(--rx-shadow-soft), var(--rx-highlight);
-  padding: 22px;
+  padding: var(--rx-pad);
   display: flex;
   flex-direction: column;
-  gap: 14px;
-}
-.rx-card[data-pad='lg'] {
-  padding: 28px;
+  gap: var(--rx-gap-inner);
+  color: var(--rx-ink);
 }
 .rx-card[data-tall='true'] {
-  min-height: min(54dvh, 470px);
+  min-height: min(54dvh, calc(var(--spacing-12) * 10));
 }
 .rx-fill {
   flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 24px;
+  gap: var(--rx-gap-inner);
 }
 .rx-card[data-tone='sunk'] {
   background: var(--rx-surface-sunk);
@@ -148,21 +177,23 @@ button.rx-card {
   text-align: start;
   cursor: pointer;
   width: 100%;
-  transition: transform 0.35s var(--rx-ease), box-shadow 0.35s var(--rx-ease);
+  transition: transform 0.35s var(--rx-ease);
   -webkit-tap-highlight-color: transparent;
 }
 button.rx-card:active {
   transform: scale(0.985);
 }
-button.rx-card:focus-visible {
+button.rx-card:focus-visible,
+.rx-btn:focus-visible,
+.rx-icon-btn:focus-visible {
   outline: 2px solid var(--rx-ink);
   outline-offset: 3px;
 }
 
-/* ---------- Deck：一叠卡，后面两张露出边 ---------- */
+/* ---------- Deck ---------- */
 .rx-deck {
   position: relative;
-  padding-bottom: 22px;
+  padding-bottom: var(--spacing-4);
 }
 .rx-deck::before,
 .rx-deck::after {
@@ -170,23 +201,21 @@ button.rx-card:focus-visible {
   position: absolute;
   left: 0;
   right: 0;
-  height: 60px;
+  height: var(--spacing-12);
   bottom: 0;
   border-radius: var(--rx-radius-card);
   background: var(--rx-surface);
   box-shadow: var(--rx-shadow-soft);
 }
 .rx-deck::before {
-  transform: translateY(0) scale(0.88);
+  transform: scale(0.88);
   opacity: 0.55;
 }
 .rx-deck::after {
-  transform: translateY(-11px) scale(0.94);
+  transform: translateY(calc(var(--spacing-2) * -1)) scale(0.94);
   opacity: 0.8;
 }
-.rx-deck[data-depth='1']::before {
-  display: none;
-}
+.rx-deck[data-depth='1']::before,
 .rx-deck[data-depth='0']::before,
 .rx-deck[data-depth='0']::after {
   display: none;
@@ -200,25 +229,26 @@ button.rx-card:focus-visible {
 }
 @keyframes rx-deck-in {
   from {
-    transform: translateY(14px) scale(0.96);
+    transform: translateY(var(--spacing-3)) scale(0.96);
     opacity: 0.4;
   }
 }
 
-/* ---------- Chip：柔和胶囊 / 彩色虚线胶囊 ---------- */
+/* ---------- Chip ---------- */
 .rx-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 30px;
-  padding: 0 12px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1;
+  gap: var(--spacing-1-5);
+  height: var(--rx-h-chip);
+  padding: 0 var(--spacing-3);
+  border-radius: var(--rx-radius-pill);
+  font-size: var(--rx-fs-caption);
+  line-height: var(--rx-lh-caption);
+  font-weight: 550;
   white-space: nowrap;
   background: var(--rx-surface-sunk);
   color: var(--rx-ink-2);
+  box-sizing: border-box;
 }
 .rx-chip[data-kind='tint'] {
   background: hsl(var(--rx-chip-hue) 85% 95%);
@@ -227,98 +257,113 @@ button.rx-card:focus-visible {
 .rx-chip[data-kind='dashed'] {
   background: hsl(var(--rx-chip-hue) 85% 96%);
   color: hsl(var(--rx-chip-hue) 60% 30%);
-  box-shadow: none;
-  border: 1.5px dashed hsl(var(--rx-chip-hue) 55% 62%);
+  border: var(--rx-hairline) dashed hsl(var(--rx-chip-hue) 55% 62%);
 }
 .rx-chip[data-kind='bubble'] {
   background: var(--rx-surface);
   color: var(--rx-ink-2);
-  border-radius: 10px;
+  border-radius: var(--rx-radius-inner);
   box-shadow: 0 1px 2px rgba(17, 17, 18, 0.04);
 }
 .rx-chip[data-size='lg'] {
-  height: 36px;
-  padding: 0 14px;
-  font-size: 15px;
+  height: var(--rx-h-chip-lg);
+  padding: 0 var(--spacing-4);
+  font-size: var(--rx-fs-sm);
+  line-height: var(--rx-lh-sm);
 }
 .rx-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
+  gap: var(--rx-gap-item);
 }
 
-/* ---------- Stat：一句话里嵌彩色数字块 ---------- */
+/* ---------- 字 ---------- */
 .rx-sentence {
   margin: 0;
-  font-size: 19px;
-  line-height: 2.05;
+  font-size: var(--rx-fs-lg);
+  /* 行高取大号胶囊的高度 + 一档，保证嵌进去的胶囊上下不相撞 */
+  line-height: calc(var(--rx-h-chip-lg) + var(--spacing-2));
   font-weight: 500;
   color: var(--rx-ink);
   text-wrap: pretty;
 }
 .rx-sentence .rx-chip {
   vertical-align: middle;
-  margin: 0 3px;
+  margin: 0 var(--spacing-1);
 }
-
-/* ---------- 字 ---------- */
+.rx-phrase {
+  display: inline-block;
+  white-space: nowrap;
+}
 .rx-word {
   margin: 0;
-  font-size: 44px;
-  line-height: 1.05;
+  font-size: var(--rx-fs-display);
+  line-height: var(--rx-lh-display);
   letter-spacing: -0.03em;
   font-weight: 650;
   color: var(--rx-ink);
   overflow-wrap: anywhere;
 }
 .rx-big {
-  font-size: 56px;
-  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--rx-gap-item);
+  font-size: var(--rx-fs-hero);
+  line-height: var(--rx-lh-hero);
   letter-spacing: -0.04em;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
 }
+.rx-big[data-size='title'] {
+  font-size: var(--rx-fs-title);
+  line-height: var(--rx-lh-title);
+  letter-spacing: -0.02em;
+}
 .rx-big small {
-  font-size: 17px;
+  font-size: var(--rx-fs-body);
+  line-height: var(--rx-lh-body);
   letter-spacing: 0;
   font-weight: 500;
   color: var(--rx-ink-2);
-  margin-inline-start: 6px;
 }
 .rx-text {
   margin: 0;
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: var(--rx-fs-body);
+  line-height: var(--rx-lh-body);
   color: var(--rx-ink);
 }
 .rx-text[data-tone='2'] {
   color: var(--rx-ink-2);
 }
 .rx-text[data-size='sm'] {
-  font-size: 14px;
+  font-size: var(--rx-fs-sm);
+  line-height: var(--rx-lh-sm);
 }
 .rx-text[data-size='lg'] {
-  font-size: 19px;
-  line-height: 1.45;
+  font-size: var(--rx-fs-lg);
+  line-height: var(--rx-lh-lg);
 }
 .rx-text[data-weight='medium'] {
-  font-weight: 550;
+  font-weight: 600;
 }
 .rx-card[data-tone='ink'] .rx-text[data-tone='2'] {
   color: rgba(255, 255, 255, 0.72);
 }
 .rx-label {
   margin: 0;
-  font-size: 13px;
-  font-weight: 550;
-  letter-spacing: 0.01em;
+  font-size: var(--rx-fs-caption);
+  line-height: var(--rx-lh-caption);
+  font-weight: 600;
   color: var(--rx-ink-2);
 }
 .rx-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--spacing-3);
+  /* 行里放了胶囊或图标按钮时，行高由最高的控件决定；纯文字行不被撑高 */
+  min-height: var(--rx-lh-body);
 }
 .rx-stack {
   display: flex;
@@ -327,8 +372,8 @@ button.rx-card:focus-visible {
 .rx-divider {
   height: 0;
   border: 0;
-  border-top: 1.5px dashed var(--rx-line);
-  margin: 4px 0;
+  border-top: var(--rx-hairline) dashed var(--rx-line);
+  margin: 0;
 }
 .rx-reveal {
   animation: rx-reveal 0.4s var(--rx-ease);
@@ -336,14 +381,14 @@ button.rx-card:focus-visible {
 @keyframes rx-reveal {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(var(--spacing-2));
   }
 }
 
-/* ---------- Meter：细进度 ---------- */
+/* ---------- Meter ---------- */
 .rx-meter {
-  height: 6px;
-  border-radius: 999px;
+  height: var(--spacing-1-5);
+  border-radius: var(--rx-radius-pill);
   background: rgba(17, 17, 18, 0.07);
   overflow: hidden;
 }
@@ -355,55 +400,58 @@ button.rx-card:focus-visible {
   transition: width 0.5s var(--rx-ease);
 }
 
-/* ---------- Dots：一周打卡点 ---------- */
+/* ---------- WeekDots ---------- */
 .rx-dots {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
-  gap: 6px;
+  gap: var(--spacing-1);
 }
 .rx-dot {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 500;
+  gap: var(--rx-gap-item);
+  font-size: var(--rx-fs-caption);
+  line-height: var(--rx-lh-caption);
+  font-weight: 550;
   color: var(--rx-ink-2);
 }
 .rx-dot > i {
-  width: 30px;
-  height: 30px;
+  box-sizing: border-box;
+  width: var(--spacing-8);
+  height: var(--spacing-8);
   border-radius: 50%;
-  border: 1.5px dashed rgba(17, 17, 18, 0.2);
+  border: var(--rx-hairline) dashed rgba(17, 17, 18, 0.2);
 }
 .rx-dot[data-state='done'] > i {
   border: 0;
-  background: var(--rx-ink);
-  box-shadow: inset 0 0 0 9px var(--rx-ink), inset 0 0 0 30px #fff;
+  background: radial-gradient(circle, #fff 0 var(--spacing-1), var(--rx-ink) calc(var(--spacing-1) + 0.5px));
 }
 .rx-dot[data-state='today'] > i {
-  border: 1.5px solid var(--rx-ink);
+  border: var(--rx-hairline) solid var(--rx-ink);
 }
 .rx-dot[data-state='today'] {
   color: var(--rx-ink);
 }
 
-/* ---------- 按钮：黑胶囊 / 柔白 / 彩色评分 ---------- */
+/* ---------- 按钮 ---------- */
 .rx-btn {
   appearance: none;
+  box-sizing: border-box;
   border: 0;
   font: inherit;
-  font-size: 17px;
+  font-size: var(--rx-fs-body);
+  line-height: var(--rx-lh-body);
   font-weight: 600;
-  min-height: 56px;
-  padding: 0 24px;
-  border-radius: 999px;
+  min-height: var(--rx-h-primary);
+  padding: 0 var(--spacing-6);
+  border-radius: var(--rx-radius-pill);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--rx-gap-item);
   width: 100%;
   background: var(--rx-ink);
   color: #fff;
@@ -414,10 +462,6 @@ button.rx-card:focus-visible {
 .rx-btn:active {
   transform: scale(0.97);
 }
-.rx-btn:focus-visible {
-  outline: 2px solid var(--rx-ink);
-  outline-offset: 3px;
-}
 .rx-btn[data-kind='soft'] {
   background: rgba(255, 255, 255, 0.78);
   color: var(--rx-ink);
@@ -427,16 +471,15 @@ button.rx-card:focus-visible {
 .rx-btn[data-kind='tint'] {
   background: hsl(var(--rx-chip-hue) 85% 94%);
   color: hsl(var(--rx-chip-hue) 65% 26%);
-  border: 1.5px dashed hsl(var(--rx-chip-hue) 55% 60%);
+  border: var(--rx-hairline) dashed hsl(var(--rx-chip-hue) 55% 60%);
   box-shadow: none;
 }
 .rx-btn[data-kind='ghost'] {
   background: transparent;
   color: var(--rx-ink-2);
   box-shadow: none;
-  min-height: 44px;
-  font-size: 15px;
-  font-weight: 550;
+  min-height: var(--rx-h-touch);
+  font-size: var(--rx-fs-sm);
 }
 .rx-btn[data-fit='true'] {
   width: auto;
@@ -445,13 +488,13 @@ button.rx-card:focus-visible {
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
-  gap: 12px;
+  gap: var(--spacing-3);
 }
 .rx-icon-btn {
   appearance: none;
   border: 0;
-  width: 44px;
-  height: 44px;
+  width: var(--rx-h-touch);
+  height: var(--rx-h-touch);
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -461,12 +504,13 @@ button.rx-card:focus-visible {
   box-shadow: var(--rx-shadow-soft), var(--rx-highlight);
   flex: none;
 }
-.rx-icon-btn:focus-visible {
-  outline: 2px solid var(--rx-ink);
-  outline-offset: 3px;
+/* 放在卡片里的图标按钮不再叠一层阴影：卡里的东西是平的 */
+.rx-card .rx-icon-btn {
+  background: var(--rx-surface-sunk);
+  box-shadow: none;
 }
 
-/* ---------- 清单行 ---------- */
+/* ---------- 清单 ---------- */
 .rx-list {
   list-style: none;
   margin: 0;
@@ -478,9 +522,9 @@ button.rx-card:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  padding: 14px 0;
-  border-top: 1.5px dashed var(--rx-line);
+  gap: var(--spacing-3);
+  padding: var(--spacing-3) 0;
+  border-top: var(--rx-hairline) dashed var(--rx-line);
 }
 .rx-list > li:first-child {
   border-top: 0;

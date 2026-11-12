@@ -3,6 +3,7 @@
 // 用法: node scripts/gate-app.mjs runs/<name>
 //   1 规格   app-spec.json 合合同；每屏有实现；每条验收场景有脚本
 //   2 源码   屏幕只用配方和组件；没有空的事件处理；没有写死的样式
+//     规范   配方样式里的间距、字号、圆角、高度只能来自刻度变量
 //   3 构建   vite build
 //   4 验收   在 390×844 的真实浏览器里把每条验收场景点一遍（全新存储、可拨动的日期）
 //   5 每屏   截图；无横向溢出；触控目标 ≥ 44；对比度与可访问性
@@ -67,6 +68,24 @@ for (const [file, raw] of Object.entries(sources)) {
 for (const f of list(path.join(RUN, 'app/logic'), ['.ts'])) {
   const src = fs.readFileSync(f, 'utf8');
   if (/from ['"]\.\.\/screens/.test(src) || /from ['"].*recipes/.test(src)) report.fail('source', '业务逻辑不应该依赖界面', path.relative(RUN, f));
+}
+
+// 规范：配方样式里，尺寸只能来自刻度变量。:root 里定义变量；:root 之外不许写死间距、字号、圆角、高度。
+for (const f of [path.join(KIT, 'recipes/recipes.css'), path.join(RUN, 'style/visual.css')].filter((x) => fs.existsSync(x))) {
+  const cssRaw = fs.readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '));
+  const rootEnd = cssRaw.indexOf('}', cssRaw.indexOf(':root'));
+  const body = cssRaw.slice(0, cssRaw.indexOf(':root')).replace(/[^\n]/g, ' ') + cssRaw.slice(cssRaw.indexOf(':root'), rootEnd + 1).replace(/[^\n]/g, ' ') + cssRaw.slice(rootEnd + 1);
+  const SIZED = /(?<=[{;]\s*|^\s*)(padding[a-z-]*|margin[a-z-]*|gap|row-gap|column-gap|font-size|line-height|border-radius|width|height|min-height|max-height|min-width|inset|top|right|bottom|left)\s*:\s*([^;]+);/gm;
+  let bad = 0;
+  for (const m of body.matchAll(SIZED)) {
+    const value = m[2].replace(/var\([^()]*\)/g, '').replace(/env\([^()]*\)/g, '');
+    const raw = value.match(/(?<![\w.-])(?!0(px|rem)?\b)\d*\.?\d+(px|rem|em)\b/);
+    if (raw) {
+      report.fail('tokens', `写死的尺寸 ${m[1]}: ${raw[0]}。间距、字号、圆角、高度只能用刻度变量（--spacing-* / --rx-*）`, `${path.relative(KIT, f)}:${body.slice(0, m.index).split('\n').length}`);
+      bad++;
+    }
+  }
+  if (!bad) report.pass('tokens', `${path.relative(KIT, f)}：尺寸全部来自刻度`);
 }
 
 // ---------- 3 构建 ----------

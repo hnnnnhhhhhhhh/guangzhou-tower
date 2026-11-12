@@ -1,4 +1,4 @@
-import {Btn, Chip, Item, Label, List, P, Screen, Sentence, SoftCard, Stack, TwoToneTitle} from '../../../../recipes';
+import {Btn, Chip, Item, Label, List, P, Phrase, Screen, Sentence, SoftCard, Stack, TwoToneTitle} from '../../../../recipes';
 import {WORD_BY_ID} from '../data/words';
 import {addDays, dueOn, today} from '../logic/srs';
 import type {State} from '../logic/srs';
@@ -15,26 +15,27 @@ export function Summary({state, result, onHome}: {state: State; result: SessionR
       {/* region: result */}
       <Sentence>
         {result.learned > 0 ? (
-          <>
-            你新学了
+          <Phrase>
+            新学了
             <Chip kind="tint" hue="amber" size="lg">
               {result.learned} 个新词
             </Chip>
-          </>
+          </Phrase>
         ) : null}
-        {result.learned > 0 && result.reviewed > 0 ? '，' : null}
         {result.reviewed > 0 ? (
-          <>
+          <Phrase>
             复习了
             <Chip kind="tint" hue="blue" size="lg">
               {result.reviewed} 个词
             </Chip>
-          </>
+          </Phrase>
         ) : null}
-        ，一次记住
-        <Chip kind="tint" hue="green" size="lg">
-          {rate}%
-        </Chip>
+        <Phrase>
+          一次记住
+          <Chip kind="tint" hue="green" size="lg">
+            {rate}%
+          </Chip>
+        </Phrase>
       </Sentence>
 
       {/* region: missed */}

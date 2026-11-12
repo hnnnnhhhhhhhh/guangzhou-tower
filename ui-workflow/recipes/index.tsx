@@ -5,7 +5,8 @@ import './recipes.css';
 
 export type Hue = 'blue' | 'green' | 'amber' | 'rose' | 'violet';
 const hue = (h?: Hue) => (h ? ({'--rx-chip-hue': `var(--rx-hue-${h})`} as CSSProperties) : undefined);
-const GAP = {1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 8: 32} as const;
+// 间距只能取组件库刻度上的档位（4px 一档）
+const GAP = {1: 'var(--spacing-1)', 2: 'var(--spacing-2)', 3: 'var(--spacing-3)', 4: 'var(--spacing-4)', 6: 'var(--spacing-6)', 8: 'var(--spacing-8)'} as const;
 type Gap = keyof typeof GAP;
 
 /** 一屏：带色调的底 + 滚动内容 + 可选的底部浮层。screen 用于验收测试识别当前在哪一屏。 */
@@ -40,14 +41,12 @@ export function TwoToneTitle({eyebrow, title, end}: {eyebrow: string; title: str
 /** 白、厚、软的卡。给了 onPress 就是整张可点。 */
 export function SoftCard({
   tone = 'surface',
-  pad = 'md',
   tall,
   onPress,
   label,
   children,
 }: {
   tone?: 'surface' | 'sunk' | 'ink';
-  pad?: 'md' | 'lg';
   /** 撑到大半屏高，给“整屏只有这一张卡”的场合 */
   tall?: boolean;
   onPress?: () => void;
@@ -55,11 +54,11 @@ export function SoftCard({
   children: ReactNode;
 }) {
   return onPress ? (
-    <button type="button" className="rx-card" data-tone={tone} data-pad={pad} onClick={onPress} aria-label={label}>
+    <button type="button" className="rx-card" data-tone={tone} onClick={onPress} aria-label={label}>
       {children}
     </button>
   ) : (
-    <div className="rx-card" data-tone={tone} data-pad={pad} data-tall={tall ? 'true' : undefined}>
+    <div className="rx-card" data-tone={tone} data-tall={tall ? 'true' : undefined}>
       {children}
     </div>
   );
@@ -87,9 +86,11 @@ export const Chips = ({children}: {children: ReactNode}) => <div className="rx-c
 
 /** 一句话，里面可以嵌 Chip 当数字块。 */
 export const Sentence = ({children}: {children: ReactNode}) => <p className="rx-sentence">{children}</p>;
+/** 句子里不可拆开的一小段（文字 + 它的数字块），整段一起换行。 */
+export const Phrase = ({children}: {children: ReactNode}) => <span className="rx-phrase">{children}</span>;
 export const Word = ({children}: {children: ReactNode}) => <p className="rx-word">{children}</p>;
-export const Big = ({value, unit}: {value: ReactNode; unit?: string}) => (
-  <span className="rx-big">
+export const Big = ({value, unit, size = 'hero'}: {value: ReactNode; unit?: string; size?: 'hero' | 'title'}) => (
+  <span className="rx-big" data-size={size}>
     {value}
     {unit ? <small>{unit}</small> : null}
   </span>
@@ -101,7 +102,7 @@ export const P = ({tone = '1', size = 'md', weight, children}: {tone?: '1' | '2'
 );
 export const Label = ({children}: {children: ReactNode}) => <p className="rx-label">{children}</p>;
 export const Row = ({children}: {children: ReactNode}) => <div className="rx-row">{children}</div>;
-export const Stack = ({gap = 3, children}: {gap?: Gap; children: ReactNode}) => (
+export const Stack = ({gap = 4, children}: {gap?: Gap; children: ReactNode}) => (
   <div className="rx-stack" style={{gap: GAP[gap]}}>
     {children}
   </div>
@@ -110,7 +111,7 @@ export const Stack = ({gap = 3, children}: {gap?: Gap; children: ReactNode}) => 
 export const Fill = ({children}: {children: ReactNode}) => <div className="rx-fill">{children}</div>;
 export const Divider = () => <hr className="rx-divider" />;
 /** 内容出现时轻轻浮上来。 */
-export const Reveal = ({children}: {children: ReactNode}) => <div className="rx-reveal rx-stack" style={{gap: GAP[3]}}>{children}</div>;
+export const Reveal = ({children}: {children: ReactNode}) => <div className="rx-reveal rx-stack" style={{gap: GAP[4]}}>{children}</div>;
 
 export function Meter({value, max, label}: {value: number; max: number; label: string}) {
   return (

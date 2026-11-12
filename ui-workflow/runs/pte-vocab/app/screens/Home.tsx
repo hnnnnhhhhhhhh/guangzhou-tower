@@ -48,7 +48,7 @@ export function Home({state, update, onStart, onWords}: {state: State; update: (
       {/* region: today-task */}
       {todo > 0 ? (
         <Deck depth={todo > 2 ? 2 : todo - 1} cardKey="task">
-          <SoftCard pad="lg" onPress={onStart} label={`今日任务，${todo} 个词，开始学习`}>
+          <SoftCard onPress={onStart} label={`今日任务，${todo} 个词，开始学习`}>
             <Label>今日任务</Label>
             <Big value={todo} unit="个词" />
             <Chips>
@@ -66,9 +66,9 @@ export function Home({state, update, onStart, onWords}: {state: State; update: (
           </SoftCard>
         </Deck>
       ) : (
-        <SoftCard pad="lg">
+        <SoftCard>
           <Label>今日任务</Label>
-          <Big value={allDone ? '全部学完' : '今天学完了'} />
+          <Big size="title" value={allDone ? '全部学完' : '今天学完了'} />
           <P tone="2">{tomorrow > 0 ? `明天有 ${tomorrow} 个词等你复习。` : unseen > 0 ? '想多学一点，可以再加 10 个新词。' : '接下来按复习日期回来就好。'}</P>
         </SoftCard>
       )}
