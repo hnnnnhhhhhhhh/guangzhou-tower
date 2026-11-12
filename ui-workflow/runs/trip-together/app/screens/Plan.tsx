@@ -2,8 +2,8 @@
 import {Button} from '@astryxdesign/core/Button';
 import {KINDS} from '../data/seed';
 import type {Trip} from '../data/seed';
-import {dayLabel, member, range, stopsOf} from '../logic/trip';
-import {Avatars, Days, Empty, Enter, Gap, H2, Note, Pulse, Route, Row, Screen, Stack, Sticker, StopCard, Sub, Title} from '../ui';
+import {dayLabel, member, stopsOf} from '../logic/trip';
+import {Avatars, DateNum, Days, Empty, Enter, Gap, H2, Note, Pulse, Route, Row, Screen, Stack, Sticker, StopCard, Sub, Title} from '../ui';
 import type {View} from '../ui';
 
 const sticker = (kind: string) => KINDS.find((k) => k.id === kind)?.sticker ?? 'round-pushpin';
@@ -25,7 +25,9 @@ export function Plan({trip, day, onDay, onView, onMembers, onStop, onAdd}: {trip
         <Row>
           <Stack gap={1}>
             <Title>{trip.name}</Title>
-            <Sub>{range(trip)}</Sub>
+            <Sub>
+              <DateNum value={dayLabel(trip, 1).short} /> – <DateNum value={dayLabel(trip, trip.days).short} /> · {trip.days} 天
+            </Sub>
           </Stack>
           <Avatars members={trip.members} onPress={onMembers} />
         </Row>

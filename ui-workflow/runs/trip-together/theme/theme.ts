@@ -18,6 +18,6 @@ export const theme = defineTheme({
     '--shadow-med': '0 2px 4px rgba(6,26,40,0.06), 0 14px 32px rgba(6,26,40,0.12)',
   },
   components: {
-    button: {base: {borderRadius: 'var(--radius-full)', minHeight: 'var(--spacing-11)', fontWeight: 'var(--font-weight-semibold)'}, 'size:lg': {minHeight: 'calc(var(--spacing-7) * 2)'}},
+    button: {base: {borderRadius: 'var(--radius-full)', minHeight: 'var(--spacing-11)', fontWeight: 'var(--font-weight-medium)'}, 'size:lg': {minHeight: 'calc(var(--spacing-7) * 2)'}},
   },
 });

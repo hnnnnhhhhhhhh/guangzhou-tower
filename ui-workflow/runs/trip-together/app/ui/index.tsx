@@ -2,8 +2,8 @@
 import type {ReactNode} from 'react';
 import {Plus} from 'lucide-react';
 import '@fontsource/noto-sans-sc/500.css';
+import '@fontsource/noto-sans-sc/600.css';
 import '@fontsource/noto-sans-sc/700.css';
-import '@fontsource/noto-sans-sc/900.css';
 import {STICKERS} from '../stickers';
 import type {StickerName} from '../stickers';
 import type {Member} from '../data/seed';
@@ -44,6 +44,17 @@ export const Enter = ({id, children}: {id: string; children: ReactNode}) => (
     {children}
   </div>
 );
+/** D03 日期分三段：分隔符小一档、次级色、两侧 2px */
+export const DateNum = ({value}: {value: string}) => {
+  const [m, d] = value.split('/');
+  return (
+    <span className="t-date" aria-label={`${m} 月 ${d} 日`}>
+      {m}
+      <i>/</i>
+      {d}
+    </span>
+  );
+};
 export const Title = ({children}: {children: ReactNode}) => <h1 className="t-title">{children}</h1>;
 export const Sub = ({children}: {children: ReactNode}) => <p className="t-sub">{children}</p>;
 export const H2 = ({children}: {children: ReactNode}) => <h2 className="t-h2">{children}</h2>;
@@ -77,7 +88,7 @@ export function Days({items, active, onPick}: {items: {day: number; short: strin
     <div className="t-days">
       {items.map((d) => (
         <button key={d.day} type="button" className="t-day" aria-pressed={d.day === active} aria-label={`第 ${d.day} 天，${d.short}，${d.count} 站`} onClick={() => onPick(d.day)}>
-          {d.short}
+          <DateNum value={d.short} />
           <small>{d.week}</small>
         </button>
       ))}

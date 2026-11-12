@@ -169,6 +169,36 @@ if (built && spec) {
         }
         return {over: document.documentElement.scrollWidth > vw + 1, small};
       });
+      // 细节规则（docs/design-details.md）：D02 一种分隔、D05 粗体稀缺、D06 字体不混排
+      const d = await page.evaluate(() => {
+        const visible = (el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0; };
+        const both = [];
+        for (const el of document.querySelectorAll('[data-screen] *')) {
+          if (!visible(el)) continue;
+          const cs = getComputedStyle(el);
+          const border = parseFloat(cs.borderTopWidth) >= 1 && cs.borderTopStyle === 'solid' && !/, 0\)$|transparent/.test(cs.borderTopColor);
+          const shadow = cs.boxShadow !== 'none' && !/^(rgba?\([^)]*\) 0px 0px 0px 0px,? ?)+$/.test(cs.boxShadow) && !cs.boxShadow.includes('inset');
+          if (border && shadow) both.push(el.className.toString().split(' ')[0] || el.tagName.toLowerCase());
+        }
+        let total = 0, bold = 0, heavy = 0, serif = 0;
+        const walker = document.createTreeWalker(document.querySelector('[data-screen]'), NodeFilter.SHOW_TEXT);
+        for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+          const len = n.textContent.trim().length;
+          const el = n.parentElement;
+          if (!len || !el || !visible(el)) continue;
+          const cs = getComputedStyle(el);
+          const w = Number(cs.fontWeight);
+          total += len;
+          if (w >= 700) bold += len;
+          if (w >= 800) heavy += len;
+          if (/serif/i.test(cs.fontFamily.split(',')[0]) && !/sans/i.test(cs.fontFamily.split(',')[0])) serif += len;
+        }
+        return {both: [...new Set(both)].slice(0, 6), bold: total ? bold / total : 0, heavy: total ? heavy / total : 0, serif: total ? serif / total : 0};
+      });
+      if (d.both.length) report.warn('detail', `D02 同一个元素既有描边又有阴影：${d.both.join('、')}`, `out/${shot}`);
+      if (d.heavy > 0) report.warn('detail', `D05 用了 800 以上的字重（占可见文字 ${Math.round(d.heavy * 100)}%）`, `out/${shot}`);
+      if (d.bold > 0.25) report.warn('detail', `D05 粗体占可见文字 ${Math.round(d.bold * 100)}%，超过四分之一`, `out/${shot}`);
+      if (d.serif > 0.05 && d.serif < 0.95) report.warn('detail', `D06 衬线与无衬线混排（衬线占 ${Math.round(d.serif * 100)}%）`, `out/${shot}`);
       if (m.over) report.fail('viewport', '390 宽下横向溢出', `out/${shot}`);
       if (m.small.length) report.fail('touch', `触控目标小于 44：${m.small.join('；')}`, `out/${shot}`);
       await page.addScriptTag({content: axeSource});
