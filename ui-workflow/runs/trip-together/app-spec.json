@@ -1,0 +1,52 @@
+{
+  "product": "几个人一起排旅行行程：按天安排每一站，把想去的地方放进一个池子投票，再排进某一天",
+  "audience": "结伴出行的三五个朋友或家人，出发前一两周在手机上断断续续地商量",
+  "platform": "ios",
+  "jobs": ["一起把每天去哪、几点去定下来", "先把想去的地方都丢进来，再看大家最想去哪些", "知道谁刚刚改了什么"],
+  "core_loop": {
+    "trigger": "打开看到当天的路线，以及最近一条“谁做了什么”",
+    "steps": ["选一天", "看这一天的每一站", "加一站，或者在两站之间插一站", "去“想去”里给别人的提议投票", "把票多的排进某一天"],
+    "feedback": "新的一站按时间落到路线上的正确位置；头部出现“某某 把某地加到了第几天”；另一个窗口里同行的人立刻看到",
+    "return_reason": "别人又加了新的想去的地方，或者改了行程"
+  },
+  "entities": [
+    {"name": "Trip", "fields": ["name", "start", "days", "members"], "changes_when": "只读（示例行程）"},
+    {"name": "Stop", "fields": ["day", "time", "name", "note", "kind", "by 谁加的"], "changes_when": "加一站、修改、删除、把想去排进行程"},
+    {"name": "Idea", "fields": ["name", "note", "kind", "by", "votes 谁想去"], "changes_when": "加一个想去、投票或取消、排进行程后移除"},
+    {"name": "LogEntry", "fields": ["who", "text"], "changes_when": "任何人做了以上任何改动"},
+    {"name": "Me", "fields": ["memberId"], "changes_when": "在同行页切换身份；按窗口各自保存"}
+  ],
+  "rules": [
+    "一天里的站按时间从早到晚排，新加或改时间后自动落到正确位置",
+    "在两站之间点加号，默认时间取两站的中间值（取整到半小时）",
+    "时间必须是 24 小时制的 时:分；地点名不能为空；不合格时不保存并说明原因",
+    "想去的地方按票数从多到少排；提出的人自动算一票；投票是开关，再点一次取消",
+    "把想去排进某天后，它从想去里移除，变成那天的一站，保留是谁提的",
+    "每次改动记一条“谁做了什么”，行程页显示最近一条",
+    "同一浏览器的多个窗口之间实时同步；每个窗口各自记住“我是谁”"
+  ],
+  "content": {
+    "what": "一份示例行程：京都四日，5 站已排、3 个想去、4 位同行",
+    "source": "地点是真实地名；时间和备注为演示编写",
+    "amount": "5 站 + 3 个想去",
+    "gaps": "没有地点图片（图片位留空，放了表示类型的贴纸）；没有地图和路程时间；没有真实的地点搜索"
+  },
+  "persistence": "浏览器本地存储，同一浏览器的窗口之间同步。没有服务端，不能跨设备协作",
+  "screens": [
+    {"id": "plan", "purpose": "按天看路线，加和改每一站", "primary_action": "加一站", "leads_to": ["stop", "ideas", "members"], "states": ["有安排", "这天还没安排"], "signature": "一条虚线把每一站串起来，两站之间的加号用来在那里插一站", "evidence": ["polarsteps-plan", "wanderlog-itinerary", "mindtrip-itinerary"]},
+    {"id": "stop", "purpose": "新增或修改一站", "primary_action": "保存", "leads_to": ["plan"]},
+    {"id": "ideas", "purpose": "想去的地方和大家的票", "primary_action": "投票 / 排进行程", "leads_to": ["schedule", "idea-new", "plan", "members"], "signature": "虚线卡表示“还没定”，名字用暖色", "evidence": ["mindtrip-itinerary", "polarsteps-plan", "locals-poll"]},
+    {"id": "idea-new", "purpose": "加一个想去的地方", "primary_action": "保存", "leads_to": ["ideas"]},
+    {"id": "schedule", "purpose": "把一个想去排进某一天", "primary_action": "排进去", "leads_to": ["plan", "ideas"]},
+    {"id": "members", "purpose": "看同行的人、切换身份、邀请", "primary_action": "完成", "leads_to": ["plan", "ideas"], "evidence": ["wanderlog-invite"]}
+  ],
+  "acceptance": [
+    {"id": "plan-a-day", "given": "第一次打开", "when": "在第 1 天的两站之间插入“锦市场”，再改它的时间，最后删掉", "then": "它每次都落在按时间排序的正确位置；头部显示最近一条改动；删掉后不再出现"},
+    {"id": "vote-and-schedule", "given": "想去里有 3 个地方", "when": "给“金阁寺”投票，再把“哲学之道”排进第 3 天", "then": "金阁寺变成 2 人想去；哲学之道离开想去，出现在第 3 天"},
+    {"id": "two-people", "given": "同一个行程开了两个窗口", "when": "第二个窗口切换成小林并加了一站", "then": "第一个窗口不用刷新就看到这一站，并显示“小林 把……加到了第 2 天”"},
+    {"id": "validation", "given": "在加一站的页面", "when": "不填地点，或者时间写成 25:00", "then": "不保存，并说明哪里不对"},
+    {"id": "persistence", "given": "加过一个想去的地方", "when": "刷新页面", "then": "它还在"},
+    {"id": "prototype-skin", "given": "用原型皮打开", "when": "看行程和想去两屏", "then": "结构和功能与成品一致，只是没有风格"}
+  ],
+  "not_in_scope": ["跨设备的真实协作", "地图与路程时间", "地点搜索与图片", "预算与分账", "可编辑 / 仅查看的权限区分"]
+}

@@ -1,0 +1,79 @@
+{
+  "measured_from": [
+    "polarsteps-plan.jpg"
+  ],
+  "mode": "light",
+  "accent_candidates": [
+    {
+      "hex": "#355568",
+      "hue": 200,
+      "seen_in": 1,
+      "of": 1,
+      "area": 0.0025
+    }
+  ],
+  "neutrals": [
+    {
+      "hex": "#FDFEFE",
+      "lum": 1,
+      "area": 0.726
+    },
+    {
+      "hex": "#EEF2F5",
+      "lum": 0.95,
+      "area": 0.003
+    },
+    {
+      "hex": "#EBEDF1",
+      "lum": 0.93,
+      "area": 0.004
+    },
+    {
+      "hex": "#E8E9EA",
+      "lum": 0.91,
+      "area": 0.027
+    },
+    {
+      "hex": "#DEE1E5",
+      "lum": 0.88,
+      "area": 0.005
+    },
+    {
+      "hex": "#DBDEE3",
+      "lum": 0.87,
+      "area": 0.004
+    },
+    {
+      "hex": "#D9D9DB",
+      "lum": 0.85,
+      "area": 0.007
+    },
+    {
+      "hex": "#CCD3D8",
+      "lum": 0.82,
+      "area": 0.001
+    },
+    {
+      "hex": "#C7CCD2",
+      "lum": 0.8,
+      "area": 0.001
+    },
+    {
+      "hex": "#C5C8CA",
+      "lum": 0.78,
+      "area": 0.003
+    },
+    {
+      "hex": "#B6B7BB",
+      "lum": 0.72,
+      "area": 0.001
+    },
+    {
+      "hex": "#AAB3BA",
+      "lum": 0.7,
+      "area": 0.001
+    }
+  ],
+  "chroma_share": 0.002,
+  "note": "accent_candidates[0] 通常是品牌主色；seen_in 低说明它只在个别屏出现（多半是内容图片，不是 UI 色）。chroma_share 是彩色面积占比：< 0.05 克制，> 0.2 浓烈。字体、圆角、间距量不出来，需要读图判断后写进 DESIGN.md。"
+}

@@ -156,7 +156,14 @@ if (built && spec) {
         const vw = document.documentElement.clientWidth;
         const small = [];
         for (const el of document.querySelectorAll('button, a[href], input, [role="button"]')) {
-          const r = el.getBoundingClientRect();
+          let r = el.getBoundingClientRect();
+          // 输入框的点击面是包着它的那个框（点框的任何位置都会聚焦），按外框量
+          if (el.matches('input, textarea')) {
+            for (let p = el.parentElement, i = 0; p && i < 3; p = p.parentElement, i++) {
+              const pr = p.getBoundingClientRect();
+              if (pr.height > r.height && pr.height <= 80) r = pr;
+            }
+          }
           // 2px 以内的是给读屏用的隐形代理（真正的点击面是它外面的容器），不算触控目标
           if (r.width > 2 && r.height > 2 && (r.height < 43.5 || r.width < 43.5)) small.push(`${(el.getAttribute('aria-label') || el.textContent || el.tagName).trim().slice(0, 14)} (${Math.round(r.width)}×${Math.round(r.height)})`);
         }

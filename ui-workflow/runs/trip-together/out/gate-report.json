@@ -1,0 +1,10 @@
+{
+  "run": "runs/trip-together",
+  "passed": true,
+  "summary": {
+    "pass": 33,
+    "warn": 0,
+    "fail": 0
+  },
+  "items": []
+}
