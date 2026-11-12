@@ -1,0 +1,49 @@
+{
+  "product": "科目一理论考试刷题：按章节练习、模拟考试、错题重做",
+  "audience": "正在备考驾照科目一的学员，碎片时间用手机刷题",
+  "platform": "ios",
+  "jobs": ["把会考的知识点一道一道做会", "考前知道自己能不能过", "把做错的题弄明白"],
+  "core_loop": {
+    "trigger": "打开就是下一道没做过的题",
+    "steps": ["读题", "点一个选项", "立刻看到对错和解析", "点下一题"],
+    "feedback": "选项当场变成绿牌或红框，解析出现在选项上方；章节上的已做数加一；答错的进错题本",
+    "return_reason": "错题本里还有待巩固的题；模考成绩没到合格线"
+  },
+  "entities": [
+    {"name": "Question", "fields": ["id", "chapter", "text", "options", "answer", "why 解析"], "changes_when": "只读内容"},
+    {"name": "Done", "fields": ["questionId", "correct"], "changes_when": "在练习里答一道题"},
+    {"name": "Wrong", "fields": ["questionId"], "changes_when": "练习或模考答错时加入；在错题本里答对时移出"},
+    {"name": "MockResult", "fields": ["score", "total", "passed", "wrong"], "changes_when": "模考交卷"}
+  ],
+  "rules": [
+    "练习按章节进行，每章按固定顺序出没做过的题；一道题只做一次，做过的不再出现在练习里",
+    "练习里答完立刻显示对错和解析；答错的题进入错题本，同一道题不重复进入",
+    "错题本里答对才移出，答错留在原处",
+    "模考 10 题、5 分钟，每章轮流取题；答题过程中不显示对错",
+    "模考可以回到上一题改答案；未作答算错；时间到自动交卷",
+    "模考合格线为 90%，即 10 题答对 9 题；交卷后答错的题进入错题本",
+    "中途放弃模考不计成绩，也不产生错题"
+  ],
+  "content": {
+    "what": "科目一选择题与判断题：题干、选项、答案、解析",
+    "source": "按科目一常见知识点原创编写的示例题",
+    "amount": "4 章，每章 6 题，共 24 题",
+    "gaps": "不是官方题库，没有图片题（标志识别、手势识别），未经驾培老师审校。真实考试 100 题 45 分钟，这里的模考是缩短版"
+  },
+  "persistence": "浏览器本地存储。关掉再开还在；换设备或清除浏览器数据会丢",
+  "screens": [
+    {"id": "practice", "purpose": "打开就做下一道题", "primary_action": "选一个答案", "leads_to": ["mock", "mistakes"], "states": ["未作答", "已作答", "本章完成"], "signature": "选项是路牌：答对变绿牌，答错变红框", "evidence": ["做法卡 F 首页即题", "做法卡 B 拇指区作答"]},
+    {"id": "mock", "purpose": "说明模考规则并开始", "primary_action": "开始考试", "leads_to": ["mock-run", "practice", "mistakes"]},
+    {"id": "mock-run", "purpose": "像考场一样作答，不提示对错", "primary_action": "交卷", "leads_to": ["mock-result", "mock"], "signature": "从沥青黑切到白色答卷", "evidence": ["做法卡 E 安静的答卷"]},
+    {"id": "mock-result", "purpose": "成绩、是否合格、错了哪些", "primary_action": "去错题本重做", "leads_to": ["mistakes", "mock"]},
+    {"id": "mistakes", "purpose": "把做错的题重做到会", "primary_action": "选一个答案", "leads_to": ["practice", "mock"], "states": ["有错题", "没有错题"]}
+  ],
+  "acceptance": [
+    {"id": "practice-flow", "given": "第一次打开", "when": "第 1 题答对，第 2 题答错", "then": "每次都立刻看到对错和解析；章节显示已做 2 / 6；错题本里有 1 题"},
+    {"id": "persistence", "given": "做过两道题", "when": "刷新页面", "then": "打开就是第 3 题，章节仍显示 2 / 6"},
+    {"id": "mock-exam", "given": "第一次打开", "when": "模考答对 8 题、答错 2 题后交卷", "then": "过程中没有任何对错提示；成绩 8 / 10、未通过；错题本里有这 2 题"},
+    {"id": "mistakes-clear", "given": "错题本里有 1 道题", "when": "先答错一次，再答对", "then": "答错时它还在；答对后错题本清空"},
+    {"id": "chapter-switch", "given": "第一次打开", "when": "切到“安全行车”并答一题，再切回“法律法规”", "then": "两章的进度各自保留"}
+  ],
+  "not_in_scope": ["图片题", "官方完整题库", "账号与云同步", "统计页"]
+}

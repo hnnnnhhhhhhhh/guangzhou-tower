@@ -1,0 +1,115 @@
+/* 气质：路牌。沥青黑的底、信号黄的强调、厚边圆角的牌子；模考切到“答卷”：白纸、细线。
+   数值全部取自 apps-builder 设计方法第 8 节的规格：
+   间距 4/8/12/16/24/32/48 · 圆角 8/12/16/24 · 字号 主体 28 / 标题 20 / 正文 16 / 辅助 13 */
+:root {
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s6: 24px; --s8: 32px; --s12: 48px;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 24px;
+  --f-main: 28px; --f-title: 20px; --f-body: 16px; --f-aux: 13px;
+  --road: #16171a; --road-2: #212329; --road-line: #34373f;
+  --ink-on-road: #f4f4f1; --ink-on-road-2: #a9acb4;
+  --yellow: #ffd21f; --ink-on-yellow: #1a1a12;
+  --go: #2fbf71; --stop: #ff5a4f;
+  --paper: #fbfaf6; --paper-line: #dedbd2; --ink: #1b1c1f; --ink-2: #63666e;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+* { box-sizing: border-box; }
+.q-screen { height: 100dvh; display: flex; flex-direction: column; background: var(--road); color: var(--ink-on-road); font-size: var(--f-body); line-height: 1.5; }
+.q-screen[data-tone='paper'] { background: var(--paper); color: var(--ink); }
+.q-scroll { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; display: flex; flex-direction: column; gap: var(--s6); padding: calc(env(safe-area-inset-top, 0px) + var(--s6)) var(--s4) var(--s8); }
+.q-grow { flex: 1; min-height: var(--s4); }
+.q-stack { display: flex; flex-direction: column; }
+.q-row { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+
+/* 贴纸 */
+.q-sticker { display: block; flex: none; }
+
+/* 章节：横向一排牌子 */
+.q-chapters { display: flex; gap: var(--s2); overflow-x: auto; scrollbar-width: none; margin: 0 calc(var(--s4) * -1); padding: 0 var(--s4); }
+.q-chapter { appearance: none; font: inherit; cursor: pointer; flex: none; display: flex; align-items: center; gap: var(--s2); min-height: 44px; padding: var(--s1) var(--s3) var(--s1) var(--s2); border-radius: var(--r-md); border: 1.5px solid var(--road-line); background: transparent; color: var(--ink-on-road-2); font-size: var(--f-aux); font-weight: 600; white-space: nowrap; }
+.q-chapter b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.q-chapter[aria-pressed='true'] { background: var(--yellow); border-color: var(--yellow); color: var(--ink-on-yellow); }
+
+/* 题 */
+.q-count { margin: 0; font-size: var(--f-aux); font-weight: 600; letter-spacing: 0.04em; color: var(--ink-on-road-2); font-variant-numeric: tabular-nums; }
+.q-screen[data-tone='paper'] .q-count { color: var(--ink-2); }
+.q-text { margin: 0; font-size: var(--f-main); line-height: 1.32; font-weight: 700; letter-spacing: -0.01em; text-wrap: pretty; }
+.q-text[data-size='title'] { font-size: var(--f-title); line-height: 1.45; font-weight: 600; }
+.q-enter { animation: q-in 0.4s var(--ease); }
+@keyframes q-in { from { opacity: 0; transform: translateY(8px); } }
+
+/* 选项：路牌 */
+.q-plates { display: flex; flex-direction: column; gap: var(--s3); }
+.q-plate { appearance: none; font: inherit; text-align: start; cursor: pointer; display: flex; align-items: center; gap: var(--s3); min-height: 56px; padding: var(--s3) var(--s4); border-radius: var(--r-lg); border: 2px solid var(--road-line); background: var(--road-2); color: var(--ink-on-road); font-size: var(--f-body); font-weight: 600; line-height: 1.4; transition: transform 0.25s var(--ease), border-color 0.2s, background 0.2s; }
+.q-plate:active:not(:disabled) { transform: scale(0.98); }
+.q-plate i { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--r-sm); font-style: normal; font-size: var(--f-aux); font-weight: 700; background: var(--road-line); color: var(--ink-on-road); }
+.q-plate span { flex: 1; }
+.q-plate em { flex: none; font-style: normal; font-size: var(--f-aux); font-weight: 700; }
+.q-plate[data-state='right'] { background: var(--go); border-color: var(--go); color: #06230f; }
+.q-plate[data-state='right'] i { background: #06230f; color: var(--go); }
+.q-plate[data-state='wrong'] { background: transparent; border-color: var(--stop); color: var(--stop); }
+.q-plate[data-state='wrong'] i { background: var(--stop); color: #2a0806; }
+.q-plate[data-state='dim'] { opacity: 0.45; }
+.q-plate:disabled { cursor: default; }
+
+/* 解析：不套卡片，一条黄线引出 */
+.q-why { display: flex; gap: var(--s3); align-items: flex-start; padding-inline-start: var(--s3); border-inline-start: 3px solid var(--yellow); }
+.q-why p { margin: 0; color: var(--ink-on-road); }
+.q-screen[data-tone='paper'] .q-why p { color: var(--ink); }
+
+/* 按钮 */
+.q-btn { appearance: none; font: inherit; cursor: pointer; width: 100%; min-height: 52px; padding: 0 var(--s6); border: 0; border-radius: var(--r-lg); background: var(--yellow); color: var(--ink-on-yellow); font-size: var(--f-body); font-weight: 700; transition: transform 0.25s var(--ease); }
+.q-btn:active { transform: scale(0.98); }
+.q-btn[data-kind='quiet'] { background: transparent; color: inherit; border: 1.5px solid currentColor; opacity: 0.85; }
+.q-btn[data-kind='ink'] { background: var(--ink); color: var(--paper); }
+.q-link { appearance: none; font: inherit; cursor: pointer; border: 0; background: none; color: inherit; min-height: 44px; padding: 0 var(--s2); font-size: var(--f-aux); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+button:focus-visible { outline: 2px solid var(--yellow); outline-offset: 2px; }
+.q-screen[data-tone='paper'] button:focus-visible { outline-color: var(--ink); }
+
+/* 大标题与说明 */
+.q-title { margin: 0; font-size: var(--f-main); line-height: 1.2; font-weight: 800; letter-spacing: -0.02em; }
+.q-note { margin: 0; font-size: var(--f-aux); line-height: 1.5; color: var(--ink-on-road-2); }
+.q-screen[data-tone='paper'] .q-note { color: var(--ink-2); }
+.q-body { margin: 0; }
+.q-hero { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s4); }
+.q-facts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.q-facts li { display: flex; justify-content: space-between; gap: var(--s3); padding: var(--s3) 0; border-top: 1px solid var(--road-line); }
+.q-facts li:last-child { border-bottom: 1px solid var(--road-line); }
+.q-facts span { color: var(--ink-on-road-2); }
+.q-facts b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.q-screen[data-tone='paper'] .q-facts li { border-color: var(--paper-line); }
+.q-screen[data-tone='paper'] .q-facts span { color: var(--ink-2); }
+
+/* 答卷：细线分隔的单选行，没有卡片 */
+.q-sheet-head { display: flex; align-items: center; justify-content: space-between; padding-bottom: var(--s3); border-bottom: 2px solid var(--ink); }
+.q-timer { font-size: var(--f-title); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.q-options { display: flex; flex-direction: column; }
+.q-option { appearance: none; font: inherit; text-align: start; cursor: pointer; display: flex; align-items: center; gap: var(--s3); min-height: 56px; padding: var(--s3) 0; border: 0; border-top: 1px solid var(--paper-line); background: none; color: var(--ink); font-size: var(--f-body); line-height: 1.4; }
+.q-option:last-child { border-bottom: 1px solid var(--paper-line); }
+.q-option i { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--ink); }
+.q-option[aria-checked='true'] { font-weight: 700; }
+.q-option[aria-checked='true'] i { background: radial-gradient(circle, var(--ink) 0 5px, transparent 6px); }
+.q-dots { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.q-dots i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--ink); }
+.q-dots i[data-on='true'] { background: var(--ink); }
+.q-dots i[data-now='true'] { outline: 2px solid var(--yellow); outline-offset: 1px; }
+.q-nav { display: grid; grid-template-columns: 1fr 2fr; gap: var(--s3); padding: var(--s3) var(--s4) calc(env(safe-area-inset-bottom, 0px) + var(--s4)); border-top: 1px solid var(--paper-line); background: var(--paper); }
+
+/* 成绩 */
+.q-score { margin: 0; font-size: 40px; line-height: 1; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.q-score small { font-size: var(--f-title); font-weight: 600; color: var(--ink-2); }
+.q-stamp { display: inline-block; padding: var(--s1) var(--s3); border: 2.5px solid currentColor; border-radius: var(--r-sm); font-size: var(--f-title); font-weight: 800; letter-spacing: 0.12em; transform: rotate(-4deg); }
+.q-stamp[data-pass='true'] { color: #18794a; }
+.q-stamp[data-pass='false'] { color: #c8382f; }
+.q-list { list-style: none; margin: 0; padding: 0; }
+.q-list li { padding: var(--s3) 0; border-top: 1px solid var(--road-line); }
+.q-screen[data-tone='paper'] .q-list li { border-color: var(--paper-line); }
+.q-list p { margin: 0; }
+.q-list p + p { margin-top: var(--s1); font-size: var(--f-aux); color: var(--ink-on-road-2); }
+.q-screen[data-tone='paper'] .q-list p + p { color: var(--ink-2); }
+
+/* 悬浮胶囊底栏（沿用现有外壳的形态，只换颜色） */
+.q-tabs-wrap { padding: 0 var(--s4) calc(env(safe-area-inset-bottom, 0px) + var(--s4)); }
+.q-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--s1); padding: var(--s1); border-radius: 999px; background: var(--road-2); border: 1px solid var(--road-line); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35); }
+.q-tab { appearance: none; font: inherit; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; border: 0; border-radius: 999px; background: none; color: var(--ink-on-road-2); font-size: var(--f-aux); font-weight: 600; }
+.q-tab[aria-current='page'] { background: var(--yellow); color: var(--ink-on-yellow); }
+@media (prefers-reduced-motion: reduce) { .q-enter { animation: none; } .q-plate, .q-btn { transition: none; } }
