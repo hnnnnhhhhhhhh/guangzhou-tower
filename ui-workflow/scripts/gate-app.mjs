@@ -91,6 +91,15 @@ for (const f of [path.join(KIT, 'recipes/recipes.css'), path.join(RUN, 'style/vi
 // ---------- 3 构建 ----------
 let built = false;
 if (!fs.existsSync(path.join(RUN, 'index.html'))) fs.copyFileSync(path.join(KIT, 'templates/index.html'), path.join(RUN, 'index.html'));
+if (fs.existsSync(path.join(RUN, 'theme/theme.ts'))) {
+  // 有主题就先编译：主题写错了在这里就会报
+  try {
+    execFileSync('npx', ['astryx', 'theme', 'build', path.join(RUN_REL, 'theme/theme.ts')], {cwd: KIT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe']});
+    report.pass('theme', 'theme.ts 编译通过');
+  } catch (e) {
+    report.fail('theme', `主题编译失败：${(e.stderr || e.stdout || e.message).trim().split('\n').slice(0, 5).join(' | ')}`);
+  }
+}
 try {
   execFileSync('npx', ['vite', 'build', '--logLevel', 'error'], {cwd: KIT, env: {...process.env, RUN: RUN_REL}, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe']});
   built = true;
@@ -148,7 +157,8 @@ if (built && spec) {
         const small = [];
         for (const el of document.querySelectorAll('button, a[href], input, [role="button"]')) {
           const r = el.getBoundingClientRect();
-          if (r.width && r.height && (r.height < 43.5 || r.width < 43.5)) small.push(`${(el.getAttribute('aria-label') || el.textContent || el.tagName).trim().slice(0, 14)} (${Math.round(r.width)}×${Math.round(r.height)})`);
+          // 2px 以内的是给读屏用的隐形代理（真正的点击面是它外面的容器），不算触控目标
+          if (r.width > 2 && r.height > 2 && (r.height < 43.5 || r.width < 43.5)) small.push(`${(el.getAttribute('aria-label') || el.textContent || el.tagName).trim().slice(0, 14)} (${Math.round(r.width)}×${Math.round(r.height)})`);
         }
         return {over: document.documentElement.scrollWidth > vw + 1, small};
       });

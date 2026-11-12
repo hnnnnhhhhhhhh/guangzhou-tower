@@ -34,7 +34,7 @@
   --rx-gap-inner: var(--spacing-4); /* 卡片里的块与块 16 */
   --rx-gap-card: var(--spacing-4); /* 卡片与卡片 16 */
   --rx-gap-section: var(--spacing-8); /* 标题与内容、区与区 32 */
-  --rx-radius-card: var(--radius-page); /* 28 */
+  --rx-radius-card: var(--radius-container); /* 跟随主题的“容器”圆角 */
   --rx-radius-inner: var(--radius-container); /* 12 */
   --rx-radius-pill: var(--radius-full);
   /* 控件高度：三档 */

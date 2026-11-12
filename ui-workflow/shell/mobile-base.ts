@@ -3,5 +3,4 @@
 export const mobileBase = {
   tab: {base: {minHeight: '44px'}},
   button: {base: {minHeight: '44px'}},
-  'icon-button': {base: {minHeight: '44px', minWidth: '44px'}},
 } as const;
