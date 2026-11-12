@@ -9,7 +9,7 @@ export function MockResult({state, onMistakes, onBack}: {state: State; onMistake
       <Screen screen="mock-result" tone="paper">
         <Note>还没有考试成绩。</Note>
         <Grow />
-        <Btn kind="ink" onPress={onBack}>
+        <Btn onPress={onBack}>
           返回
         </Btn>
       </Screen>
@@ -41,7 +41,7 @@ export function MockResult({state, onMistakes, onBack}: {state: State; onMistake
       <Grow />
       <Stack gap={3}>
         {r.wrong.length > 0 ? (
-          <Btn kind="ink" onPress={onMistakes}>
+          <Btn onPress={onMistakes}>
             去错题本重做
           </Btn>
         ) : null}

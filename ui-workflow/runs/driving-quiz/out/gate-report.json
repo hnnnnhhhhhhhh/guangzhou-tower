@@ -2,7 +2,7 @@
   "run": "runs/driving-quiz",
   "passed": true,
   "summary": {
-    "pass": 27,
+    "pass": 28,
     "warn": 0,
     "fail": 0
   },

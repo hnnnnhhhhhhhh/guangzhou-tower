@@ -1,0 +1,79 @@
+{
+  "measured_from": [
+    "commons-quiz.jpg"
+  ],
+  "mode": "light",
+  "accent_candidates": [
+    {
+      "hex": "#6464B0",
+      "hue": 240,
+      "seen_in": 1,
+      "of": 1,
+      "area": 0.0007
+    }
+  ],
+  "neutrals": [
+    {
+      "hex": "#F8F8F8",
+      "lum": 0.97,
+      "area": 0.609
+    },
+    {
+      "hex": "#E8E7E3",
+      "lum": 0.91,
+      "area": 0.238
+    },
+    {
+      "hex": "#D9D8D7",
+      "lum": 0.85,
+      "area": 0.003
+    },
+    {
+      "hex": "#C8C8C6",
+      "lum": 0.78,
+      "area": 0.003
+    },
+    {
+      "hex": "#B9B9B8",
+      "lum": 0.73,
+      "area": 0.002
+    },
+    {
+      "hex": "#A8A8A7",
+      "lum": 0.66,
+      "area": 0.002
+    },
+    {
+      "hex": "#787877",
+      "lum": 0.47,
+      "area": 0.002
+    },
+    {
+      "hex": "#484848",
+      "lum": 0.28,
+      "area": 0.002
+    },
+    {
+      "hex": "#383737",
+      "lum": 0.22,
+      "area": 0.002
+    },
+    {
+      "hex": "#292828",
+      "lum": 0.16,
+      "area": 0.003
+    },
+    {
+      "hex": "#181717",
+      "lum": 0.09,
+      "area": 0.003
+    },
+    {
+      "hex": "#010101",
+      "lum": 0,
+      "area": 0.04
+    }
+  ],
+  "chroma_share": 0.001,
+  "note": "accent_candidates[0] 通常是品牌主色；seen_in 低说明它只在个别屏出现（多半是内容图片，不是 UI 色）。chroma_share 是彩色面积占比：< 0.05 克制，> 0.2 浓烈。字体、圆角、间距量不出来，需要读图判断后写进 DESIGN.md。"
+}

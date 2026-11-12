@@ -2,7 +2,7 @@
 import {useEffect, useMemo, useState} from 'react';
 import {MOCK_SECONDS, clock, mockPaper, submitMock} from '../logic/quiz';
 import type {State} from '../logic/quiz';
-import {Btn, Dots, LinkBtn, Options, QuestionText, Row, Screen, SheetHead, SheetNav, Stack} from '../ui';
+import {Bar, Btn, LinkBtn, Options, QuestionText, Row, Screen, SheetHead, SheetNav, Stack} from '../ui';
 
 export function Mock({update, onQuit, onDone}: {update: (fn: (s: State) => State) => void; onQuit: () => void; onDone: () => void}) {
   const paper = useMemo(mockPaper, []);
@@ -36,11 +36,11 @@ export function Mock({update, onQuit, onDone}: {update: (fn: (s: State) => State
             上一题
           </Btn>
           {last ? (
-            <Btn kind="ink" onPress={submit}>
+            <Btn onPress={submit}>
               交卷
             </Btn>
           ) : (
-            <Btn kind="ink" onPress={() => setIndex((i) => i + 1)}>
+            <Btn onPress={() => setIndex((i) => i + 1)}>
               下一题
             </Btn>
           )}
@@ -49,14 +49,14 @@ export function Mock({update, onQuit, onDone}: {update: (fn: (s: State) => State
       {/* region: sheet-head */}
       <Stack gap={3}>
         <SheetHead left={`第 ${index + 1} / ${paper.length} 题`} timer={clock(left)} />
-        <Row>
-          <Dots total={paper.length} answered={paper.map((p) => picks[p.id] !== undefined)} now={index} />
-          <LinkBtn onPress={onQuit}>放弃本次考试</LinkBtn>
-        </Row>
+        <Bar value={Object.keys(picks).length} max={paper.length} label="已作答题数" />
       </Stack>
       {/* region: sheet-question */}
       <QuestionText size="title">{q.text}</QuestionText>
       <Options options={q.options} picked={picks[q.id]} onPick={(i) => setPicks((p) => ({...p, [q.id]: i}))} />
+      <Row>
+        <LinkBtn onPress={onQuit}>放弃本次考试</LinkBtn>
+      </Row>
     </Screen>
   );
 }

@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {CHAPTERS} from '../data/questions';
 import {answer, doneIn, inChapter, nextChapter, nextIn} from '../logic/quiz';
 import type {State} from '../logic/quiz';
-import {Body, Btn, Chapters, Count, Enter, Grow, Hero, Plates, QuestionText, Screen, Stack, Sticker, Title, Why} from '../ui';
+import {Bar, Body, Btn, Chapters, Count, Enter, Grow, Hero, Plates, QuestionText, Screen, Stack, Sticker, Title, Why} from '../ui';
 import type {PlateState, Tab} from '../ui';
 
 export function Practice({state, update, onTab}: {state: State; update: (fn: (s: State) => State) => void; onTab: (t: Tab) => void}) {
@@ -35,7 +35,10 @@ export function Practice({state, update, onTab}: {state: State; update: (fn: (s:
   return (
     <Screen screen="practice" tab="practice" onTab={onTab}>
       {/* region: chapters */}
-      <Chapters items={CHAPTERS.map((c) => ({...c, done: doneIn(state, c.id), total: inChapter(c.id).length}))} active={chapter} onPick={pickChapter} />
+      <Stack gap={3}>
+        <Chapters items={CHAPTERS.map((c) => ({...c, done: doneIn(state, c.id), total: inChapter(c.id).length}))} active={chapter} onPick={pickChapter} />
+        <Bar value={done} max={total} label="本章进度" />
+      </Stack>
 
       {current ? (
         <Enter id={current.id}>

@@ -3,6 +3,12 @@ import type {ReactNode} from 'react';
 import {BookOpen, NotebookPen, Timer} from 'lucide-react';
 import {STICKERS} from '../stickers';
 import type {StickerName} from '../stickers';
+// 字体随应用打包，保证每台手机上看到的是同一套字
+import '@fontsource/noto-sans-sc/400.css';
+import '@fontsource/noto-sans-sc/700.css';
+import '@fontsource/noto-sans-sc/900.css';
+import '@fontsource/noto-serif-sc/500.css';
+import '@fontsource/noto-serif-sc/700.css';
 import './ui.css';
 
 export type Tab = 'practice' | 'mock' | 'mistakes';
@@ -35,7 +41,7 @@ export function Screen({screen, tone = 'road', tab, onTab, footer, children}: {s
 
 export const Sticker = ({name, size = 32}: {name: StickerName; size?: 32 | 48 | 72 | 96}) => <img className="q-sticker" src={STICKERS[name]} width={size} height={size} alt="" />;
 export const Stack = ({gap = 3, children}: {gap?: 1 | 2 | 3 | 4 | 6; children: ReactNode}) => (
-  <div className="q-stack" style={{gap: `var(--s${gap})`}}>
+  <div className="q-stack" style={{gap: `var(--spacing-${gap})`}}>
     {children}
   </div>
 );
@@ -43,7 +49,7 @@ export const Row = ({children}: {children: ReactNode}) => <div className="q-row"
 export const Grow = () => <div className="q-grow" />;
 /** key 变化时内容轻轻浮上来 */
 export const Enter = ({id, children}: {id: string; children: ReactNode}) => (
-  <div key={id} className="q-enter q-stack" style={{gap: 'var(--s6)', flex: 1}}>
+  <div key={id} className="q-enter q-stack" style={{gap: 'var(--spacing-6)', flex: 1}}>
     {children}
   </div>
 );
@@ -64,6 +70,11 @@ export function Chapters({items, active, onPick}: {items: {id: string; name: str
   );
 }
 
+export const Bar = ({value, max, label}: {value: number; max: number; label: string}) => (
+  <div className="q-bar" role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={max} aria-valuenow={value}>
+    <i style={{width: `${max ? (value / max) * 100 : 0}%`}} />
+  </div>
+);
 export const Count = ({children}: {children: ReactNode}) => <p className="q-count">{children}</p>;
 export const QuestionText = ({size = 'main', children}: {size?: 'main' | 'title'; children: ReactNode}) => (
   <h1 className="q-text" data-size={size}>
@@ -105,7 +116,7 @@ export const Why = ({children}: {children: ReactNode}) => (
   </div>
 );
 
-export const Btn = ({kind = 'main', onPress, children}: {kind?: 'main' | 'quiet' | 'ink'; onPress: () => void; children: ReactNode}) => (
+export const Btn = ({kind = 'main', onPress, children}: {kind?: 'main' | 'quiet'; onPress: () => void; children: ReactNode}) => (
   <button type="button" className="q-btn" data-kind={kind} onClick={onPress}>
     {children}
   </button>
@@ -147,13 +158,6 @@ export function Options({options, picked, onPick}: {options: string[]; picked?: 
     </div>
   );
 }
-export const Dots = ({total, answered, now}: {total: number; answered: boolean[]; now: number}) => (
-  <div className="q-dots" aria-hidden>
-    {Array.from({length: total}, (_, i) => (
-      <i key={i} data-on={answered[i]} data-now={i === now} />
-    ))}
-  </div>
-);
 export const SheetNav = ({children}: {children: ReactNode}) => <div className="q-nav">{children}</div>;
 export const Score = ({score, total}: {score: number; total: number}) => (
   <p className="q-score">
