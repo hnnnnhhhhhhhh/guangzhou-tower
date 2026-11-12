@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "App spec — 一句需求映射成的可用产品（阶段 A 产物）。先有它，才有屏",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["product", "audience", "jobs", "core_loop", "entities", "rules", "content", "persistence", "screens", "acceptance"],
+  "properties": {
+    "product": {"type": "string"},
+    "audience": {"type": "string"},
+    "platform": {"enum": ["ios", "android", "web"]},
+    "jobs": {
+      "type": "array", "minItems": 1, "maxItems": 5, "items": {"type": "string"},
+      "description": "用户用它来完成什么。写成结果（“记住这些词”），不是功能（“看词表”）"
+    },
+    "core_loop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trigger", "steps", "feedback", "return_reason"],
+      "description": "用户每次打开都会走一遍的那个循环。写不出来就说明这还不是一个产品",
+      "properties": {
+        "trigger": {"type": "string", "description": "什么让用户开始这一轮"},
+        "steps": {"type": "array", "minItems": 2, "items": {"type": "string"}, "description": "用户亲手做的每一步，按顺序"},
+        "feedback": {"type": "string", "description": "做完这一轮，用户立刻看到什么变化"},
+        "return_reason": {"type": "string", "description": "为什么明天还会回来"}
+      }
+    },
+    "entities": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["name", "fields"],
+        "properties": {
+          "name": {"type": "string"},
+          "fields": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "changes_when": {"type": "string", "description": "用户的哪个动作会改它；永远不变的写“只读内容”"}
+        }
+      }
+    },
+    "rules": {
+      "type": "array", "minItems": 1, "items": {"type": "string"},
+      "description": "业务规则，写到能直接实现和测试的程度（数值、边界都要有）"
+    },
+    "content": {
+      "type": "object", "additionalProperties": false, "required": ["what", "source", "amount"],
+      "description": "app 里的真实内容从哪来。占位内容不算",
+      "properties": {
+        "what": {"type": "string"},
+        "source": {"type": "string"},
+        "amount": {"type": "string"},
+        "gaps": {"type": "string", "description": "这次没备齐的部分，如实写"}
+      }
+    },
+    "persistence": {"type": "string", "description": "数据存在哪，关掉再开还在不在"},
+    "screens": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "purpose", "primary_action", "leads_to"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+          "purpose": {"type": "string"},
+          "primary_action": {"type": "string"},
+          "leads_to": {"type": "array", "items": {"type": "string"}, "description": "从这屏能去哪些屏"},
+          "states": {"type": "array", "items": {"type": "string"}},
+          "signature": {"type": "string", "description": "这屏的视觉记忆点（一屏最多一个）"},
+          "evidence": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "acceptance": {
+      "type": "array", "minItems": 2,
+      "description": "验收场景。每条对应 acceptance/<id>.mjs 里一段自动执行的操作；全部通过才算能用",
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "given", "when", "then"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+          "given": {"type": "string"},
+          "when": {"type": "string"},
+          "then": {"type": "string"}
+        }
+      }
+    },
+    "not_in_scope": {"type": "array", "items": {"type": "string"}}
+  }
+}

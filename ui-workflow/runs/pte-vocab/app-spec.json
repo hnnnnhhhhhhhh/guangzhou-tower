@@ -1,0 +1,51 @@
+{
+  "product": "备考 PTE 的学术词汇背诵 app：每天一小组，按记忆曲线安排复习",
+  "audience": "目标 PTE 50 分左右的考生，词汇基础一般，每天能拿出 10 分钟",
+  "platform": "ios",
+  "jobs": ["把学术高频词真的记住（看到英文能想起意思）", "每天知道该学哪些、复习哪些，不用自己排", "看到自己在坚持、在进步"],
+  "core_loop": {
+    "trigger": "打开 app，首页那叠卡告诉我今天有几个词要过",
+    "steps": ["点开始", "看到一个英文词，先自己回忆意思", "点“看答案”，对照释义和例句", "自己判断：记住了 / 没记住", "没记住的词本轮稍后再出现，直到记住", "全部过完，看本轮小结"],
+    "feedback": "小结里看到学了几个、复习了几个、一次记住的比例；首页的今日任务清零，进度和打卡点前进",
+    "return_reason": "今天记住的词明天会到期复习；首页会显示明天有几个词在等"
+  },
+  "entities": [
+    {"name": "Word", "fields": ["id", "word", "pos 词性", "zh 中文释义", "example 英文例句", "exampleZh 例句翻译"], "changes_when": "只读内容"},
+    {"name": "CardState", "fields": ["wordId", "box 熟练度 1–6", "due 下次复习日期", "lapses 忘记次数", "learnedOn 首次学会日期"], "changes_when": "每次自评“记住了 / 没记住”"},
+    {"name": "DayLog", "fields": ["date", "learned 当天新学会的词数", "reviewed 当天完成的复习数", "bonus 当天额外加的新词额度"], "changes_when": "每次自评；点“再学 10 个”"}
+  ],
+  "rules": [
+    "每天新词额度 10 个，按词表顺序取还没学过的；可以点“再学 10 个”把当天额度加 10",
+    "今日任务 = 所有 due ≤ 今天的复习 + 今天剩余的新词额度；一轮里先复习、后新词",
+    "新词自评“记住了”：进入 box 1，1 天后复习",
+    "复习自评“记住了”：box 加 1（最高 6），下次复习间隔按 box 为 1、2、4、7、15、30 天",
+    "复习自评“没记住”：回到 box 1，明天复习，lapses 加 1",
+    "任何词自评“没记住”后排到本轮队尾，直到在本轮里答对一次；本轮内的再次答对不再提升 box",
+    "一次记住率 = 本轮第一次就自评“记住了”的词数 ÷ 本轮词数",
+    "连续打卡 = 截至今天（今天没学则截至昨天）连续有学习记录的天数",
+    "box ≥ 4 算“已掌握”",
+    "中途退出：已自评的词已经保存，没过的词留在今日任务里"
+  ],
+  "content": {
+    "what": "学术词汇：英文、词性、中文释义、英文例句和例句翻译",
+    "source": "Academic Word List（Coxhead）第 1 组的 60 个词族中心词；释义和例句为本次编写",
+    "amount": "60 词，够用 6 天",
+    "gaps": "完整 AWL 是 570 个词族，这次只备了第 1 组。释义和例句没有经过教研审校"
+  },
+  "persistence": "浏览器本地存储（localStorage）。关掉再开还在；换设备或清除浏览器数据会丢",
+  "screens": [
+    {"id": "home", "purpose": "告诉我今天要过几个词，并让我一下就开始", "primary_action": "开始学习", "leads_to": ["study", "words"], "states": ["有任务", "今天已学完", "全部学完"], "signature": "今日任务是一叠卡，露出后面两张的边——和学习时的卡片是同一个东西", "evidence": ["capwords-home", "babbel-home"]},
+    {"id": "study", "purpose": "一次一个词：先回忆，再对答案，再自评", "primary_action": "自评：记住了 / 没记住", "leads_to": ["summary", "home"], "states": ["未揭示", "已揭示"], "signature": "整屏只有一张大卡，词用最大的字；评分是两枚彩色虚线胶囊", "evidence": ["capwords-card", "quizlet-card"]},
+    {"id": "summary", "purpose": "这一轮的结果，以及明天有什么在等", "primary_action": "回到首页", "leads_to": ["home"], "signature": "结果写成一句话，数字是嵌在句子里的彩色块", "evidence": ["capwords-summary", "babbel-summary"]},
+    {"id": "words", "purpose": "查看全部词和各自的状态", "primary_action": "返回", "leads_to": ["home"], "evidence": ["quizlet-set"]}
+  ],
+  "acceptance": [
+    {"id": "first-session", "given": "第一次打开，什么都没学过", "when": "开始学习，把 10 个新词过一遍，其中第 1 个词先答“没记住”", "then": "那个词在本轮后面再次出现；小结显示学了 10 个新词、一次记住 90%；首页今日任务清零，已学 10 / 60"},
+    {"id": "persistence", "given": "刚学完第一轮", "when": "刷新页面", "then": "进度还在：已学 10 / 60，今天已学完"},
+    {"id": "next-day-review", "given": "昨天学了 10 个词", "when": "第二天打开", "then": "今日任务是 10 个复习 + 10 个新词，先出复习；全部答对后，这 10 个词的下次复习在 2 天后，连续打卡 2 天"},
+    {"id": "forget-on-review", "given": "昨天学了 10 个词，今天来复习", "when": "对第 1 个复习词答“没记住”", "then": "它回到队尾再出现；词表里它的下次复习是明天"},
+    {"id": "quit-midway", "given": "一轮进行到一半", "when": "点关闭回到首页", "then": "已答的词已计入，今日任务只剩没过的词"},
+    {"id": "bonus-and-words", "given": "今天已学完", "when": "点“再学 10 个”并学完，然后打开词表", "then": "已学 20 / 60；词表里前 20 个词显示“学习中”，其余“未学”"}
+  ],
+  "not_in_scope": ["账号与云同步", "发音评测、拼写、听写等其他题型", "提醒通知", "深色模式"]
+}
