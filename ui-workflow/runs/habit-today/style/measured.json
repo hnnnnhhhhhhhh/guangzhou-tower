@@ -1,0 +1,89 @@
+{
+  "measured_from": [
+    "joi-add-task.jpg",
+    "joi-appearance.jpg",
+    "joi-onboarding-1.jpg",
+    "joi-onboarding-4.jpg",
+    "joi-today.jpg"
+  ],
+  "mode": "light",
+  "accent_candidates": [
+    {
+      "hex": "#02B3FD",
+      "hue": 200,
+      "seen_in": 1,
+      "of": 5,
+      "area": 0.0021
+    },
+    {
+      "hex": "#34C659",
+      "hue": 140,
+      "seen_in": 1,
+      "of": 5,
+      "area": 0.0002
+    },
+    {
+      "hex": "#FBCC02",
+      "hue": 40,
+      "seen_in": 1,
+      "of": 5,
+      "area": 0
+    },
+    {
+      "hex": "#F9D40A",
+      "hue": 60,
+      "seen_in": 1,
+      "of": 5,
+      "area": 0
+    }
+  ],
+  "neutrals": [
+    {
+      "hex": "#FEFEFE",
+      "lum": 1,
+      "area": 0.768
+    },
+    {
+      "hex": "#F7F7F7",
+      "lum": 0.97,
+      "area": 0.855
+    },
+    {
+      "hex": "#F6F6F6",
+      "lum": 0.96,
+      "area": 0.745
+    },
+    {
+      "hex": "#EDEDED",
+      "lum": 0.93,
+      "area": 0.136
+    },
+    {
+      "hex": "#E9E9E9",
+      "lum": 0.91,
+      "area": 0.046
+    },
+    {
+      "hex": "#E3E4E9",
+      "lum": 0.89,
+      "area": 0.199
+    },
+    {
+      "hex": "#D9D9D9",
+      "lum": 0.85,
+      "area": 0.027
+    },
+    {
+      "hex": "#181818",
+      "lum": 0.09,
+      "area": 0.071
+    },
+    {
+      "hex": "#050505",
+      "lum": 0.02,
+      "area": 0.015
+    }
+  ],
+  "chroma_share": 0.002,
+  "note": "accent_candidates[0] 通常是品牌主色；seen_in 低说明它只在个别屏出现（多半是内容图片，不是 UI 色）。chroma_share 是彩色面积占比：< 0.05 克制，> 0.2 浓烈。字体、圆角、间距量不出来，需要读图判断后写进 DESIGN.md。"
+}

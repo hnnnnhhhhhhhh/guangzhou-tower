@@ -1,0 +1,72 @@
+{
+  "id": "anything-today-1",
+  "source": {
+    "app": "Anything",
+    "url": "https://mobbin.com/screens/5d0e3b4b-a4a5-4e4d-b969-7577157db613",
+    "via": "mobbin-mcp",
+    "file": "anything-today-1.jpg"
+  },
+  "for_screen": "today",
+  "screen_type": "list",
+  "frame": {
+    "header": "large-title",
+    "navigation": "none",
+    "floating_action": false
+  },
+  "regions": [
+    {
+      "order": 1,
+      "role": "页面标题与今天的日期",
+      "content_shape": [
+        "title",
+        "time"
+      ],
+      "share_of_screen": "small"
+    },
+    {
+      "order": 2,
+      "role": "今日进度：完成数与进度条",
+      "content_shape": [
+        "value",
+        "ratio"
+      ],
+      "share_of_screen": "small"
+    },
+    {
+      "order": 3,
+      "role": "今天的习惯清单，行首勾选",
+      "content_shape": [
+        "collection",
+        "boolean",
+        "value"
+      ],
+      "collection_layout": "cards-vertical",
+      "share_of_screen": "large",
+      "item_fields": [
+        "行首勾选圈",
+        "名称",
+        "连续天数徽标"
+      ]
+    },
+    {
+      "order": 4,
+      "role": "新建习惯",
+      "content_shape": [
+        "action"
+      ],
+      "share_of_screen": "small"
+    }
+  ],
+  "primary_action": {
+    "label_meaning": "勾选完成一个习惯",
+    "placement": "inline-row"
+  },
+  "density": "medium",
+  "notable": [
+    "进度区是“标签 + 完成数 + 细进度条”三件，一眼读完",
+    "新建入口放在清单末尾，和清单项同宽但用虚化样式，不抢主操作"
+  ],
+  "do_not_copy": [
+    "蓝色渐变背景"
+  ]
+}

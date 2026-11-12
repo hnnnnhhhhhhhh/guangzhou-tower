@@ -1,0 +1,77 @@
+{
+  "id": "insight-timer-today-1",
+  "source": {
+    "app": "Insight Timer",
+    "url": "https://mobbin.com/screens/0034c98b-5567-44ff-97e5-068e4dfd28f2",
+    "via": "mobbin-mcp",
+    "file": "insight-timer-today-1.jpg"
+  },
+  "for_screen": "today",
+  "screen_type": "list",
+  "frame": {
+    "header": "compact-title",
+    "navigation": "stack-only",
+    "floating_action": true
+  },
+  "regions": [
+    {
+      "order": 1,
+      "role": "标明当前日期，提供“查看全部”入口",
+      "content_shape": [
+        "title",
+        "action"
+      ],
+      "share_of_screen": "small"
+    },
+    {
+      "order": 2,
+      "role": "在一周内切换日期",
+      "content_shape": [
+        "enum-choice",
+        "time"
+      ],
+      "collection_layout": "none",
+      "share_of_screen": "small"
+    },
+    {
+      "order": 3,
+      "role": "今天完成了几个",
+      "content_shape": [
+        "value"
+      ],
+      "share_of_screen": "small"
+    },
+    {
+      "order": 4,
+      "role": "今天的活动清单，逐项完成或开始",
+      "content_shape": [
+        "collection",
+        "tag",
+        "status",
+        "action"
+      ],
+      "collection_layout": "cards-vertical",
+      "share_of_screen": "medium",
+      "item_fields": [
+        "分类",
+        "名称",
+        "重复规则或状态",
+        "次数进度",
+        "行尾完成/开始按钮"
+      ]
+    }
+  ],
+  "primary_action": {
+    "label_meaning": "完成或开始一项活动",
+    "placement": "inline-row"
+  },
+  "density": "medium",
+  "notable": [
+    "汇总只用一行“0 / 3 complete”文字，不占版面",
+    "行尾按钮按类型变化：可直接勾的显示勾，需要计时的显示播放"
+  ],
+  "do_not_copy": [
+    "品牌青绿色",
+    "衬线标题字体"
+  ]
+}

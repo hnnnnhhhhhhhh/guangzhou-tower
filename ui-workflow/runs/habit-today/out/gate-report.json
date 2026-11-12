@@ -1,0 +1,10 @@
+{
+  "run": "runs/habit-today",
+  "passed": true,
+  "summary": {
+    "pass": 19,
+    "warn": 0,
+    "fail": 0
+  },
+  "items": []
+}

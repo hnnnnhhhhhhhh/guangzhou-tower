@@ -1,0 +1,66 @@
+{
+  "id": "numo-today-1",
+  "source": {
+    "app": "Numo",
+    "url": "https://mobbin.com/screens/56b83c22-8c1d-434f-af72-541afb702b46",
+    "via": "mobbin-mcp",
+    "file": "numo-today-1.jpg"
+  },
+  "for_screen": "today",
+  "screen_type": "home",
+  "frame": {
+    "header": "custom",
+    "navigation": "bottom-tabs",
+    "floating_action": true
+  },
+  "regions": [
+    {
+      "order": 1,
+      "role": "标题“今天”（可下拉切换）、全局连续计数、头像",
+      "content_shape": [
+        "title",
+        "value",
+        "person"
+      ],
+      "share_of_screen": "small"
+    },
+    {
+      "order": 2,
+      "role": "按分类筛选清单",
+      "content_shape": [
+        "enum-choice"
+      ],
+      "collection_layout": "cards-horizontal",
+      "share_of_screen": "small"
+    },
+    {
+      "order": 3,
+      "role": "今天的任务清单，行首勾选；已完成的划掉",
+      "content_shape": [
+        "collection",
+        "boolean",
+        "time"
+      ],
+      "collection_layout": "cards-vertical",
+      "share_of_screen": "medium",
+      "item_fields": [
+        "行首勾选框",
+        "名称",
+        "时间"
+      ]
+    }
+  ],
+  "primary_action": {
+    "label_meaning": "勾选完成一个任务",
+    "placement": "inline-row"
+  },
+  "density": "low",
+  "notable": [
+    "每行只有三样东西：勾选框、名称、时间，很快扫完",
+    "已完成项划掉但留在清单里"
+  ],
+  "do_not_copy": [
+    "品牌蓝头部",
+    "手写感标题字体"
+  ]
+}

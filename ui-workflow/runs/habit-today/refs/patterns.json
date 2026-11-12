@@ -1,0 +1,248 @@
+{
+  "screens": [
+    {
+      "screen_id": "today",
+      "apps": [
+        "Insight Timer",
+        "Anything",
+        "Finch",
+        "Me+",
+        "Numo"
+      ],
+      "consensus": [
+        {
+          "pattern": "页面标题就是“今天”或今天的日期，不是 app 名",
+          "evidence": [
+            "insight-timer-today-1",
+            "anything-today-1",
+            "finch-today-1",
+            "me-plus-today-1",
+            "numo-today-1"
+          ]
+        },
+        {
+          "pattern": "完成操作在清单的行内，点一下就完成，不需要进详情",
+          "evidence": [
+            "insight-timer-today-1",
+            "anything-today-1",
+            "finch-today-1",
+            "me-plus-today-1",
+            "numo-today-1"
+          ]
+        },
+        {
+          "pattern": "清单是单列竖排，一项一行",
+          "evidence": [
+            "insight-timer-today-1",
+            "anything-today-1",
+            "finch-today-1",
+            "me-plus-today-1",
+            "numo-today-1"
+          ]
+        },
+        {
+          "pattern": "新建是次要操作：浮动按钮、标题旁的小按钮或清单末尾，从不占据顶部主位",
+          "evidence": [
+            "insight-timer-today-1",
+            "anything-today-1",
+            "finch-today-1",
+            "me-plus-today-1",
+            "numo-today-1"
+          ]
+        }
+      ],
+      "divergences": [
+        {
+          "question": "要不要今日进度汇总",
+          "options": [
+            {
+              "choice": "完成数 + 进度条",
+              "evidence": [
+                "anything-today-1"
+              ]
+            },
+            {
+              "choice": "只有一行完成数或总数",
+              "evidence": [
+                "insight-timer-today-1",
+                "finch-today-1"
+              ]
+            },
+            {
+              "choice": "不做汇总",
+              "evidence": [
+                "me-plus-today-1",
+                "numo-today-1"
+              ]
+            }
+          ]
+        },
+        {
+          "question": "连续天数放哪",
+          "options": [
+            {
+              "choice": "每一项自己带",
+              "evidence": [
+                "anything-today-1",
+                "finch-today-1"
+              ]
+            },
+            {
+              "choice": "顶部一个全局计数",
+              "evidence": [
+                "me-plus-today-1",
+                "numo-today-1"
+              ]
+            },
+            {
+              "choice": "不显示",
+              "evidence": [
+                "insight-timer-today-1"
+              ]
+            }
+          ]
+        },
+        {
+          "question": "勾选控件在行首还是行尾",
+          "options": [
+            {
+              "choice": "行首",
+              "evidence": [
+                "anything-today-1",
+                "numo-today-1"
+              ]
+            },
+            {
+              "choice": "行尾",
+              "evidence": [
+                "insight-timer-today-1",
+                "me-plus-today-1"
+              ]
+            },
+            {
+              "choice": "整项可点，无独立控件",
+              "evidence": [
+                "finch-today-1"
+              ]
+            }
+          ]
+        },
+        {
+          "question": "要不要一周日期条",
+          "options": [
+            {
+              "choice": "要",
+              "evidence": [
+                "insight-timer-today-1",
+                "finch-today-1",
+                "me-plus-today-1"
+              ]
+            },
+            {
+              "choice": "不要",
+              "evidence": [
+                "anything-today-1",
+                "numo-today-1"
+              ]
+            }
+          ]
+        },
+        {
+          "question": "已完成项怎么呈现",
+          "options": [
+            {
+              "choice": "留在原位，划掉并变浅",
+              "evidence": [
+                "finch-today-1",
+                "numo-today-1"
+              ]
+            },
+            {
+              "choice": "留在原位，只换行尾图标",
+              "evidence": [
+                "insight-timer-today-1"
+              ]
+            }
+          ]
+        },
+        {
+          "question": "有没有底部标签栏",
+          "options": [
+            {
+              "choice": "有",
+              "evidence": [
+                "me-plus-today-1",
+                "numo-today-1"
+              ]
+            },
+            {
+              "choice": "没有（单页或栈）",
+              "evidence": [
+                "insight-timer-today-1",
+                "anything-today-1",
+                "finch-today-1"
+              ]
+            }
+          ]
+        }
+      ],
+      "decisions": [
+        {
+          "decision": "保留今日进度汇总：完成数 + 细进度条",
+          "because": "core_tasks 第 2 条“看一眼今天还剩几个”需要一个不用数行数就能读到的数字",
+          "evidence": [
+            "anything-today-1",
+            "insight-timer-today-1"
+          ]
+        },
+        {
+          "decision": "连续天数写在每一项的副文本里，不做全局计数",
+          "because": "core_tasks 第 3 条是知道每个习惯坚持了多久；用户只有 3–6 个习惯，逐项看得过来",
+          "evidence": [
+            "finch-today-1",
+            "anything-today-1"
+          ]
+        },
+        {
+          "decision": "勾选框放行首",
+          "because": "主操作是勾选；习惯名长短不一（有的会换行），放行首位置固定，一列对齐，扫起来最快",
+          "evidence": [
+            "anything-today-1",
+            "numo-today-1"
+          ]
+        },
+        {
+          "decision": "不做一周日期条",
+          "because": "audience 每次打开不到一分钟、只处理今天；回看历史放到“统计”标签",
+          "evidence": [
+            "anything-today-1",
+            "numo-today-1"
+          ]
+        },
+        {
+          "decision": "已完成项留在原位，划掉并变浅，副文本保留连续天数",
+          "because": "用户既要看到还剩哪些（core_tasks 第 2 条），也要看到做完的还在（坚持感，第 3 条）；重新排序会让清单每次位置都变",
+          "evidence": [
+            "finch-today-1",
+            "numo-today-1"
+          ]
+        },
+        {
+          "decision": "新建放在标题行右侧，用弱化的图标按钮",
+          "because": "只有 3–6 个习惯，新建是低频操作，不能抢勾选的注意力",
+          "evidence": [
+            "finch-today-1"
+          ]
+        },
+        {
+          "decision": "底部 3 个标签：今天 / 统计 / 我的",
+          "because": "core_tasks 第 3 条需要一个看长期记录的地方，日期条去掉后由“统计”承担",
+          "evidence": [
+            "me-plus-today-1",
+            "numo-today-1"
+          ]
+        }
+      ]
+    }
+  ]
+}

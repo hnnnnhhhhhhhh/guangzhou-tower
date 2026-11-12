@@ -1,0 +1,52 @@
+{
+  "screen_id": "today",
+  "purpose": "今天要做的习惯清单，打开就能勾",
+  "primary_action": {"label": "勾选完成", "region": "habit-list"},
+  "frame": {"header": "large-title", "navigation": "bottom-tabs", "tabs": ["今天", "统计", "我的"], "active_tab": "今天"},
+  "regions": [
+    {
+      "id": "day-header",
+      "role": "告诉用户这是今天，并提供新建入口",
+      "content_shape": ["title", "time", "action"],
+      "components": ["Heading", "Text", "IconButton"],
+      "priority": "tertiary",
+      "evidence": ["anything-today-1", "finch-today-1"],
+      "notes": "标题是“今天”+ 日期（共识）。新建放标题行右侧、弱化（决定 6）"
+    },
+    {
+      "id": "day-progress",
+      "role": "一眼看到今天完成了几个、还剩几个",
+      "content_shape": ["value", "ratio"],
+      "components": ["Card", "ProgressBar", "Text"],
+      "priority": "secondary",
+      "evidence": ["anything-today-1", "insight-timer-today-1"],
+      "notes": "完成数 + 细进度条（决定 1）。成组内容，用无边框浅灰块（DESIGN.md 第 5 节）"
+    },
+    {
+      "id": "habit-list",
+      "role": "逐个勾掉今天的习惯；每项带自己的连续天数；做完的划掉留在原位",
+      "content_shape": ["collection", "boolean", "value"],
+      "components": ["List", "ListItem", "CheckboxInput"],
+      "priority": "primary",
+      "optional_slots_on": ["description"],
+      "evidence": ["anything-today-1", "numo-today-1", "finch-today-1"],
+      "notes": "行首勾选（决定 3）；副文本放连续天数（决定 2）；已完成项划掉变浅（决定 5）。行不装卡片（DESIGN.md 第 5 节）"
+    }
+  ],
+  "states": ["default"],
+  "sample_data": {
+    "date": "11月12日 星期四",
+    "done": 3,
+    "total": 5,
+    "habits": [
+      {"name": "喝够 8 杯水", "streak": 21, "done": true},
+      {"name": "晨间拉伸 10 分钟", "streak": 6, "done": true},
+      {"name": "读 20 页书", "streak": 134, "done": true},
+      {"name": "睡前不看手机，把它放到客厅充电", "streak": 0, "done": false},
+      {"name": "背 15 个单词", "streak": 2, "done": false}
+    ]
+  },
+  "gaps": [
+    {"shape": "底部标签栏", "fallback": "shell/MobileShell：LayoutFooter + TabList layout=fill"}
+  ]
+}

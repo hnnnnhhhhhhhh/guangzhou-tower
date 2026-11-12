@@ -1,0 +1,81 @@
+{
+  "id": "finch-today-1",
+  "source": {
+    "app": "Finch",
+    "url": "https://mobbin.com/screens/d7b01824-482a-4389-ba6b-5bd6709023de",
+    "via": "mobbin-mcp",
+    "file": "finch-today-1.jpg"
+  },
+  "for_screen": "today",
+  "screen_type": "list",
+  "frame": {
+    "header": "custom",
+    "navigation": "stack-only",
+    "floating_action": false
+  },
+  "regions": [
+    {
+      "order": 1,
+      "role": "当前日期（可切换）、关闭与筛选",
+      "content_shape": [
+        "time",
+        "action"
+      ],
+      "share_of_screen": "small"
+    },
+    {
+      "order": 2,
+      "role": "在一周内切换日期",
+      "content_shape": [
+        "enum-choice",
+        "time"
+      ],
+      "collection_layout": "none",
+      "share_of_screen": "small"
+    },
+    {
+      "order": 3,
+      "role": "目标总数与新建入口",
+      "content_shape": [
+        "title",
+        "value",
+        "action"
+      ],
+      "share_of_screen": "small"
+    },
+    {
+      "order": 4,
+      "role": "今天的目标清单；已完成的划掉并显示连续次数",
+      "content_shape": [
+        "collection",
+        "media",
+        "status",
+        "value",
+        "action"
+      ],
+      "collection_layout": "cards-vertical",
+      "share_of_screen": "large",
+      "item_fields": [
+        "图标",
+        "名称",
+        "连续完成次数或重复规则",
+        "更多菜单"
+      ]
+    }
+  ],
+  "primary_action": {
+    "label_meaning": "点一下目标即完成",
+    "placement": "inline-row"
+  },
+  "density": "high",
+  "notable": [
+    "已完成项留在原位：名称划掉、变浅，副文本换成“已连续 N 次”",
+    "连续次数写在每一项的副文本里，不单独占一个区",
+    "新建是标题行右侧的小按钮"
+  ],
+  "do_not_copy": [
+    "emoji 图标体系",
+    "绿色品牌头部",
+    "宠物角色"
+  ]
+}

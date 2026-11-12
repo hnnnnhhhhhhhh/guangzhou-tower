@@ -1,0 +1,109 @@
+[
+  {
+    "screen": "today",
+    "round": 1,
+    "reviewer": "与搭建者是同一个模型（按 stages/6-review.md 应换一个模型复评，分数可能偏高）",
+    "scores": [
+      {
+        "item": 1,
+        "score": 1,
+        "evidence": "主操作是行首勾选框，但未勾选的两个虚线框是很浅的灰，在白底上几乎看不见"
+      },
+      {
+        "item": 2,
+        "score": 1,
+        "evidence": "已完成的三行划线后看起来比未完成的两行更粗更重，主次反了：该突出的是还没做的"
+      },
+      {
+        "item": 3,
+        "score": 2,
+        "evidence": "三个区各对应一条 core_task，没有多余元素"
+      },
+      {
+        "item": 4,
+        "score": 2,
+        "evidence": "标题—进度块—清单之间的间距明显大于行内间距，左右边距一致"
+      },
+      {
+        "item": 5,
+        "score": 1,
+        "evidence": "单色、无描边、清单不装卡片都符合；但进度块圆角大到成了胶囊，DESIGN.md 第 5 节的胶囊只用于小标签"
+      },
+      {
+        "item": 6,
+        "score": 2,
+        "evidence": "标题是“今天”、行首勾选、每行带连续天数、完成项划掉留原位、新建在标题行右侧，都对得上 patterns 的决定"
+      },
+      {
+        "item": 7,
+        "score": 2,
+        "evidence": "最长的习惯名一行放下未截断；“今天重新开始”处理了 0；134 天正常"
+      },
+      {
+        "item": 8,
+        "score": 2,
+        "evidence": "暗色下层级关系与亮色一致，进度条和勾选框反白"
+      }
+    ],
+    "total": 13,
+    "resembles_single_reference": false,
+    "pass": true,
+    "fixes": [
+      "theme：未勾选的勾选框边框改用次级文字色，让它看得见",
+      "screen：已完成项的名称用 normal 字重，未完成项用 semibold",
+      "theme：进度块圆角从 page 档降到 container 档，并把圆角基数调到 8（编译后 container = 24px）",
+      "screen：标题行的新建按钮垂直居中"
+    ]
+  },
+  {
+    "screen": "today",
+    "round": 2,
+    "reviewer": "与搭建者是同一个模型（按 stages/6-review.md 应换一个模型复评，分数可能偏高）",
+    "scores": [
+      {
+        "item": 1,
+        "score": 2,
+        "evidence": "未勾选的虚线框现在是中灰，清晰可见；两行未完成项是全屏最黑最粗的文字"
+      },
+      {
+        "item": 2,
+        "score": 2,
+        "evidence": "三层分明：大标题与未完成项（粗黑）/ 进度块（中）/ 已完成项与副文本（灰）"
+      },
+      {
+        "item": 3,
+        "score": 2,
+        "evidence": "同第 1 轮"
+      },
+      {
+        "item": 4,
+        "score": 2,
+        "evidence": "同第 1 轮；新建按钮已与标题行垂直居中"
+      },
+      {
+        "item": 5,
+        "score": 2,
+        "evidence": "进度块是 24px 圆角的浅灰块，不再是胶囊；其余规则逐条符合。DESIGN.md 第 9 节列出的两项（虚线分隔、浮动底栏）按约定放弃"
+      },
+      {
+        "item": 6,
+        "score": 2,
+        "evidence": "同第 1 轮"
+      },
+      {
+        "item": 7,
+        "score": 1,
+        "evidence": "最长的习惯名加粗后刚好占满一行，再长一两个字就会换行；换行本身没问题，但没有实测过两行的样子"
+      },
+      {
+        "item": 8,
+        "score": 2,
+        "evidence": "暗色下关系一致"
+      }
+    ],
+    "total": 15,
+    "resembles_single_reference": false,
+    "pass": true,
+    "fixes": []
+  }
+]

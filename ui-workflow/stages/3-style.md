@@ -20,6 +20,8 @@ node scripts/palette.mjs runs/<name>
 
 读 `style/shots/`，写 `style/measured.json`：主色候选、中性色阶、彩色面积占比。**颜色用它量出来的值，不要目测。**
 
+怎么读结果：`accent_candidates` 里某个颜色 `seen_in` 接近总张数，它就是品牌主色。如果每个候选都只在 1 张图里出现、`chroma_share` 低于 0.01，说明这个风格**没有彩色主色**——强调色就是中性色阶里最深的那个（浅色模式）。不要硬挑一个彩色当主色。
+
 ## 3b 读图判断其余的（需要能看图的模型）
 
 把 `style/shots/` 的图一起看，按 `templates/DESIGN.md` 的结构写 `style/DESIGN.md`。每一节都要填，每条规则写成“做 X / 不做 Y”，并注明是从哪张图看出来的。字体认不出具体型号时，写它的类别（几何无衬线 / 人文无衬线 / 衬线 / 等宽），然后选一个可免费使用的同类字体。
@@ -35,6 +37,7 @@ node scripts/palette.mjs runs/<name>
    - 颜色 token 写成 `[浅色值, 深色值]` 一对；深色值没有参考图时，保持色相、按深色背景重新取明度，并在 DESIGN.md 里注明是推导的
    - 先调大旋钮（accent、字阶 base/ratio、radius base、字体），再做组件级覆盖。组件级覆盖不超过 6 处，多了说明风格没抓住重点
 3. `npx astryx theme build runs/<name>/theme/theme.ts`，编译通过为止。
+4. 看编译出来的实际值，不要假设：`grep -oE -- "--radius-[a-z]+: [^;]+" runs/<name>/theme/app.css | sort -u`。大旋钮是带倍率的（`radius.base: 8` 编译出来 container 是 24px、page 是 56px），凭感觉填很容易把卡片变成胶囊。
 
 ## 主题表达不了的东西
 

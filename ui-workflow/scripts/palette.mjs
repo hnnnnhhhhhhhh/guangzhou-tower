@@ -30,7 +30,10 @@ const analyse = async (dataUrl) =>
     const c = new OffscreenCanvas(w, h);
     const ctx = c.getContext('2d');
     ctx.drawImage(img, 0, 0, w, h);
-    const d = ctx.getImageData(0, 0, w, h).data;
+    // 去掉顶部状态栏和底部一条：Mobbin 的预览图底部有水印条，状态栏也不属于 app 的界面
+    const y0 = Math.round(h * 0.07);
+    const y1 = Math.round(h * 0.95);
+    const d = ctx.getImageData(0, y0, w, y1 - y0).data;
     const buckets = new Map();
     for (let i = 0; i < d.length; i += 4) {
       const key = ((d[i] >> 4) << 8) | ((d[i + 1] >> 4) << 4) | (d[i + 2] >> 4);
@@ -41,7 +44,7 @@ const analyse = async (dataUrl) =>
       b.b += d[i + 2];
       buckets.set(key, b);
     }
-    const total = w * h;
+    const total = w * (y1 - y0);
     return [...buckets.values()]
       .map((b) => ({r: Math.round(b.r / b.n), g: Math.round(b.g / b.n), b: Math.round(b.b / b.n), share: b.n / total}))
       .sort((a, b) => b.share - a.share)

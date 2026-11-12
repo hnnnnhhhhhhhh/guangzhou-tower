@@ -1,0 +1,85 @@
+{
+  "id": "me-plus-today-1",
+  "source": {
+    "app": "Me+",
+    "url": "https://mobbin.com/screens/4f0d3199-a686-467f-b80a-db4c317fe8ee",
+    "via": "mobbin-mcp",
+    "file": "me-plus-today-1.jpg"
+  },
+  "for_screen": "today",
+  "screen_type": "home",
+  "frame": {
+    "header": "compact-title",
+    "navigation": "bottom-tabs",
+    "floating_action": true
+  },
+  "regions": [
+    {
+      "order": 1,
+      "role": "标题“今天”、菜单、全局连续天数",
+      "content_shape": [
+        "title",
+        "value",
+        "action"
+      ],
+      "share_of_screen": "small"
+    },
+    {
+      "order": 2,
+      "role": "在一周内切换日期",
+      "content_shape": [
+        "enum-choice",
+        "time"
+      ],
+      "collection_layout": "none",
+      "share_of_screen": "small"
+    },
+    {
+      "order": 3,
+      "role": "计量型追踪项（喝水、心情），显示当前值并可加一",
+      "content_shape": [
+        "collection",
+        "value",
+        "action"
+      ],
+      "collection_layout": "cards-vertical",
+      "share_of_screen": "medium",
+      "item_fields": [
+        "插图",
+        "当前值/目标",
+        "名称",
+        "加号"
+      ]
+    },
+    {
+      "order": 4,
+      "role": "今天的任务清单，行尾勾选",
+      "content_shape": [
+        "collection",
+        "time",
+        "boolean"
+      ],
+      "collection_layout": "cards-vertical",
+      "share_of_screen": "medium",
+      "item_fields": [
+        "插图",
+        "时间段",
+        "名称",
+        "行尾勾选圈"
+      ]
+    }
+  ],
+  "primary_action": {
+    "label_meaning": "勾选完成一个任务",
+    "placement": "inline-row"
+  },
+  "density": "medium",
+  "notable": [
+    "计量型和勾选型分成两组，各自的行尾控件不同"
+  ],
+  "do_not_copy": [
+    "3D 插图",
+    "彩色卡片底色",
+    "紫色浮动按钮"
+  ]
+}

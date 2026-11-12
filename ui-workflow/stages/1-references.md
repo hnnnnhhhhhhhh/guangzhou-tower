@@ -12,8 +12,13 @@
 
 ## 取图的三条路，按顺序试
 
-**A. Mobbin 官方 MCP（首选）**
-端点 `https://api.mobbin.com/mcp`，首次连接走浏览器登录授权，需要 Mobbin 付费方案。连上后用 brief 里的 `category` + 每屏的 `search_terms` 检索，把结果图片存到上面两个目录。
+**A. Mobbin 连接器（首选）**
+Mobbin 有官方 MCP，需要付费方案。在 Claude 里是连接器目录中的 “Mobbin”（工具 `search_screens` / `search_flows`）；其他客户端接 `https://api.mobbin.com/mcp`，首次连接走浏览器登录。
+
+- 功能参考：`search_screens`，query 写成一句话 `<category> app <这一屏是什么>`，例如 `habit tracker app today screen with habit checklist`；`platform` 取 brief 的平台；`limit` 8 左右。一屏搜一次，不要把几屏合在一个 query 里。
+- 风格参考：`search_screens`，query 写 `<App 名> app screens`，从结果里挑 3–8 张类型不同的屏。
+- **存图**：结果里的 `image_url` 是高清图，能下载就下载它；下载不了（网络策略不放行 mobbin.com）时，用工具返回的预览图文件——分辨率低一些，读结构和量颜色够用。
+- 每张图的 `mobbin_url` 记进 `refs/sources.md`。
 
 **B. 人工导出**
 连不上 MCP（没有账号、无头环境没法走浏览器授权、网络策略不放行 mobbin.com）时，停下来请用户在 Mobbin 网页上按同样的关键词挑图、下载，放进这两个目录。把要搜的关键词列给用户。
@@ -27,6 +32,7 @@
 
 - 文件名：`<app>-<screen-id>-<序号>.png`，全小写连字符，如 `streaks-today-1.png`。这个名字去掉扩展名就是后面的 analysis id。
 - `refs/sources.md` 每张图一行：文件名、app、来源链接、取图方式（mobbin-mcp / manual-export）。
+- 截图有版权，`.gitignore` 已经把这两个目录排除在仓库之外；进仓库的只有来源链接和阶段 2 的读图结果。
 
 ## 挑图标准
 

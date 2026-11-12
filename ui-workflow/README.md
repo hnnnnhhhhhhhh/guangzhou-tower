@@ -41,7 +41,10 @@ node scripts/palette.mjs  runs/<name>   # 从 style/shots 量颜色
 node scripts/gate.mjs     runs/<name>   # 全部检查 + 明暗截图
 ```
 
-`runs/demo-habit/` 是一次跑通的样例（见它的 README）。
+两次样例运行：
+
+- `runs/habit-today/` —— **完整流程**：从 Mobbin 取了 5 个 app 的功能参考和 Joi 的风格参考，走完 0–6 全部阶段。
+- `runs/demo-habit/` —— 同一份需求的**无参考**版本，只走了规格、搭建和门禁。两者对比能看出参考和风格注入带来的差别。
 
 ## 为什么这样设计
 
@@ -61,7 +64,7 @@ node scripts/gate.mjs     runs/<name>   # 全部检查 + 明暗截图
 - **Astryx 面向桌面 Web，移动端要补。** 它没有底部标签栏，默认控件高度是 32–36px，内置图标只有 29 个。`shell/MobileShell.tsx`、`shell/mobile-base.ts` 和 `lucide-react` 是为此补的，所有屏共用。
 - **主题换不出插画、摄影和品牌图形。** 很多 app 的辨识度来自这些。风格文档的“主题之外”一节会如实列出，需要用户提供素材。
 - **阶段 2、3b、6 必须由能看图的模型做。** 其余阶段纯文本模型可以做。
-- **Mobbin 需要付费账号**，通过官方 MCP（`https://api.mobbin.com/mcp`）或人工导出取图，见 `stages/1-references.md`。
+- **Mobbin 需要付费账号**，通过它的连接器 / 官方 MCP 或人工导出取图，见 `stages/1-references.md`。参考截图不进仓库。
 - **“效果一样”指的是同一下限，不是同一张图。** 验证办法：同一份 brief 让两个模型各跑一遍，比较两份 `gate-report.json` 和由同一个评审模型打出的阶段 6 分数。
 
 ## 目录

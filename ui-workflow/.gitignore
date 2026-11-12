@@ -1,3 +1,6 @@
 node_modules/
 runs/*/out/*.html
 runs/*/theme/app.*
+# 参考截图有版权，不进仓库；来源链接记在各 run 的 refs/sources.md
+runs/*/refs/shots/*
+runs/*/style/shots/*
