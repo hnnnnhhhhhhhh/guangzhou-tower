@@ -1,0 +1,125 @@
+<!-- 例子：新家入住采购（做事型首页：打开就是清单） -->
+<div class="app">
+  <header class="topbar">
+    <button class="btn-icon" aria-label="返回" onclick="kit.toast('这里会回到上一页')" data-icon="back"></button>
+    <div class="spacer"></div>
+    <button class="avatars" id="members-btn" aria-label="一起买的人" style="border:0;background:none;padding:0;min-height:44px"></button>
+    <button class="btn-icon" aria-label="更多" data-icon="more" onclick="kit.toast('分享、重命名、删除清单')"></button>
+  </header>
+
+  <main class="page">
+    <div class="head">
+      <h1 class="t-display">新家入住采购</h1>
+      <p class="t-sub" id="summary"></p>
+    </div>
+
+    <section class="section" aria-labelledby="todo-h">
+      <div class="section-head">
+        <h2 class="t-label" id="todo-h">待买</h2>
+        <span class="t-small" id="todo-total"></span>
+      </div>
+      <ul class="list" id="todo"></ul>
+    </section>
+
+    <section class="section" aria-labelledby="done-h" id="done-section">
+      <div class="section-head">
+        <h2 class="t-label" id="done-h">已买</h2>
+      </div>
+      <ul class="list" id="done"></ul>
+    </section>
+  </main>
+
+  <div class="actionbar">
+    <button class="btn" id="add-btn"><span data-icon="plus" style="display:contents"></span>加入商品</button>
+  </div>
+</div>
+
+<script>
+  // 示例数据：真实的商品名和合理价格
+  const KEY = 'new-home-list';
+  const people = ['我', '阿May', '小周'];
+  let items = kit.store.get(KEY, [
+    {id: 1, name: '卧式吸尘器', note: '客厅地毯用', price: 399, qty: 1, by: '阿May', done: false},
+    {id: 2, name: '双抽床头柜', note: '主卧 + 次卧', price: 259, qty: 2, by: '我', done: false},
+    {id: 3, name: '照片墙相框', note: '黑色细边，五个一组', price: 49, qty: 4, by: '小周', done: false},
+    {id: 4, name: '浴室防滑垫', note: '', price: 102, qty: 1, by: '我', done: true},
+  ]);
+  const save = () => kit.store.set(KEY, items);
+  const $ = (id) => document.getElementById(id);
+
+  function row(it) {
+    return `<li class="row has-lead ${it.done ? 'done' : ''}">
+      <button class="check" role="checkbox" aria-checked="${it.done}" aria-label="${it.done ? '标为没买' : '标为已买'}：${kit.esc(it.name)}" data-toggle="${it.id}"></button>
+      <div class="row-main">
+        <span class="row-title">${kit.esc(it.name)}</span>
+        <span class="row-sub">${it.note ? kit.esc(it.note) + ' · ' : ''}${kit.esc(it.by)}加的</span>
+      </div>
+      <div class="row-end">
+        <span>${kit.fmt.price(it.price)}<span class="qty">×${it.qty}</span></span>
+      </div>
+    </li>`;
+  }
+
+  function render() {
+    const todo = items.filter((x) => !x.done);
+    const done = items.filter((x) => x.done);
+    const total = items.reduce((s, x) => s + x.price * x.qty, 0);
+    const left = todo.reduce((s, x) => s + x.price * x.qty, 0);
+    // 同一个事实只说一次：件数、已买、合计都在这一行
+    $('summary').innerHTML = `${items.length} 件 · 已买 ${done.length} · 共 ${kit.fmt.price(total)}`;
+    $('todo-total').innerHTML = todo.length ? `还要 ${kit.fmt.price(left)}` : '';
+    $('todo').innerHTML = todo.length ? todo.map(row).join('') : '<li class="empty">都买齐了。</li>';
+    $('done').innerHTML = done.map(row).join('');
+    $('done-section').hidden = done.length === 0; // 空的区块不出现
+    $('members-btn').innerHTML = people.map((p) => kit.fmt.avatar(p)).join('');
+  }
+
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-toggle]');
+    if (!t) return;
+    const it = items.find((x) => x.id === Number(t.dataset.toggle));
+    it.done = !it.done;
+    save();
+    render();
+    kit.toast(it.done ? `已买：${it.name}` : `移回待买：${it.name}`);
+  });
+
+  $('add-btn').onclick = () => {
+    const s = kit.sheet({
+      title: '加入商品',
+      body: `<div class="field"><label for="f-name">商品</label><input class="input" id="f-name" placeholder="比如 收纳箱"></div>
+        <div class="field-row">
+          <div class="field"><label for="f-price">单价</label><input class="input" id="f-price" inputmode="decimal" placeholder="0"></div>
+          <div class="field"><label for="f-qty">数量</label><input class="input" id="f-qty" inputmode="numeric" value="1"></div>
+        </div>
+        <div class="field"><label for="f-note">备注（可不填）</label><input class="input" id="f-note" placeholder="放哪、什么颜色"></div>
+        <p class="field-error" id="f-err" hidden></p>
+        <button class="btn block" id="f-save">加入</button>`,
+    });
+    s.querySelector('#f-save').onclick = () => {
+      const name = s.querySelector('#f-name').value.trim();
+      const price = Number(s.querySelector('#f-price').value);
+      const qty = Math.max(1, Math.floor(Number(s.querySelector('#f-qty').value) || 1));
+      const err = s.querySelector('#f-err');
+      if (!name) { err.textContent = '写上商品名。'; err.hidden = false; return; }
+      if (!(price >= 0)) { err.textContent = '单价写成数字。'; err.hidden = false; return; }
+      items.push({id: Date.now(), name, price, qty, note: s.querySelector('#f-note').value.trim(), by: '我', done: false});
+      save();
+      kit.closeSheet();
+      render();
+      kit.toast(`已加入：${name}`);
+    };
+  };
+
+  $('members-btn').onclick = () => {
+    kit.sheet({
+      title: '一起买的人',
+      body: `<ul class="list">${people.map((p) => `<li class="row">${kit.fmt.avatar(p, {size: 'lg'})}<div class="row-main"><span class="row-title">${p}</span><span class="row-sub">可以加商品、勾已买</span></div></li>`).join('')}</ul>
+        <button class="btn-secondary block" onclick="kit.toast('邀请链接已复制')">复制邀请链接</button>`,
+    });
+  };
+
+  // 把 data-icon 换成图标
+  document.querySelectorAll('[data-icon]').forEach((el) => (el.innerHTML = kit.icon(el.dataset.icon)));
+  render();
+</script>
