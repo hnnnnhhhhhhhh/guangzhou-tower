@@ -2,8 +2,10 @@
 
 你要做的事：把用户的一句需求，做成一个**真的能用、有自己样子**的手机小应用。
 
-整个流程是：**写规格 → 去 Mobbin 查结构 → 搭原型 → 去 Mobbin 查视觉 → 上风格 → 过门禁 → 写交付说明**。
-样例在 `runs/trip-together/`（多人排行程）和 `runs/driving-quiz/`（科目一刷题），拿不准时照着看。
+整个流程是：**写规格 → 去 Mobbin 查结构 → 写验收 → 去 Mobbin 查视觉并做选择题 → 用通用零件搭界面 → 对照细节规则 → 过门禁 → 写交付说明**。
+样例是 `runs/fit-booking/`（健身约课），拿不准时照着看。
+
+这套流程的要点：**你不需要会写样式。** 参考图长什么样，由你回答一组选择题来描述；样式由脚本生成；界面用现成的零件拼；门禁会量你做出来的东西，和你对参考图的描述对不上就不通过。
 
 ---
 
@@ -13,12 +15,12 @@
 npm install                      # 在本目录执行
 # 门禁要用 Playwright + Chromium；机器上没有的话：
 #   npm i -D playwright && npx playwright install chromium
-mkdir -p runs/<name>/{refs/shots,style/shots,app/{data,logic,screens,ui},acceptance,theme}
+mkdir -p runs/<name>/{refs/shots,style/shots,app/{data,logic,screens},acceptance,theme}
 ```
 
 - 所有命令都在本目录（`ui-workflow/`）下执行。
 - 需要 Mobbin：连接器或 MCP（`https://api.mobbin.com/mcp`），工具是 `search_screens`、`search_flows`。连不上时停下来请用户提供截图，**不要凭记忆想象某个产品长什么样**。
-- 读图的步骤（第 2、5 步）需要能看图的模型。不能看图就如实说明，交给能看图的模型做这两步。
+- 读图的步骤（第 2、4 步）需要能看图的模型。不能看图就如实说明，交给能看图的模型做这两步。
 
 ---
 
@@ -58,59 +60,76 @@ mkdir -p runs/<name>/{refs/shots,style/shots,app/{data,logic,screens,ui},accepta
 
 脚本拿到一个 `t`：`t.screen(id)` 断言在哪一屏并截图检查 · `t.tap(按钮的可读名字)` · `t.see(文字或正则)` · `t.notSee(文字)` · `t.count(文字)` · `t.expect(条件, 说明)` · `t.reload()` · `t.nextDay(n)` · `t.shot(名字)` · `t.page`（需要时直接用 Playwright）。
 
-## 4 搭原型
+## 4 去 Mobbin 查视觉，做选择题
+
+产物：`style/shots/`、`style/visual.json`
+
+**这一步你不写任何样式，只做一组选择题。** 样式由脚本根据你的答案生成。
+
+1. 选**一个**气质鲜明的产品，取它 3 张不同的屏，下载高清图放进 `style/shots/`。
+   - 先看它靠不靠照片：如果大图是画面主角而你拿不到真图，换一个参考，或者照做并写明。
+2. 量颜色，不要目测：`node scripts/palette.mjs runs/<name>`
+3. 按 `docs/reading-visuals.md` 逐题作答，写成 `style/visual.json`（合同：`schemas/visual.schema.json`）。
+   - 每一题只能选给定的选项：容器是 无 / 底色 / 描边 / 阴影，圆角是 直角 / 小 / 中 / 大 / 胶囊，等等。
+   - 每一题都要在 `evidence` 里写出依据：哪张图的哪个位置。**找不到依据就重新看图，不要按习惯选。**
+   - 最常见的错误：看到深色界面就默认“每块内容一个灰色圆角块”。先确认图上真的有。
+4. 生成样式：`node scripts/style.mjs runs/<name>` → 得到 `app/style.css` 和 `theme/theme.ts`。这两个文件不要手改。
+
+样例：`runs/fit-booking/style/visual.json`。
+
+## 5 用通用零件搭界面
 
 产物：`app/`
 
 ```
 app/main.tsx            入口，挂载 App
-app/App.tsx             路由和主题外壳
+app/App.tsx             路由和主题外壳（照抄 runs/fit-booking/app/App.tsx 的开头）
+app/style.css           第 4 步生成，不要手改
 app/data/               真实内容
 app/logic/              业务规则：纯函数，不碰界面和存储；存储单独一个文件
-app/ui/index.tsx + ui.css   这个应用自己的界面零件和样式
-app/screens/*.tsx       屏：只组合 app/ui 里的零件和 Astryx 组件
+app/screens/*.tsx       屏：只组合 kit 里的零件
 ```
 
-- 每屏最外层的零件要带 `data-screen="<规格里的屏 id>"`，门禁靠它认屏。
+**界面用 `kit/` 里的零件拼**（`import {…} from '../../../../kit'`）。它们长什么样已经由第 4 步决定，你只管放什么内容：
+
+| 要放的东西 | 用哪个零件 |
+|---|---|
+| 一屏的骨架、底部固定操作、底部导航 | `Screen`（`foot`、`tabs`） |
+| 页面标题（一屏一个）、分类小标签、小标题、正文 | `Title`、`Label`、`H2`、`Text` |
+| 页面的一个区 | `Section`，区与区之间放 `Divider` 或留白 |
+| 同类的一组东西 | `List` + `Item`（一行：`lead` 时间或序号、`title`、`sub`、`extra`、`end` 状态） |
+| 能单独拿走的一个东西 | `Surface`（它有没有底色和圆角由参考决定） |
+| 按钮 | `Btn`（`primary` 一屏最多一个；`secondary` / `quiet` / `danger`）、`IconBtn` |
+| 状态 | `Status`（色点加文字，不是按钮） |
+| 进度 | `Meter` |
+| 选一天 / 几选一 / 多选格子 | `Week`、`Segments`、`Cells` |
+| 日期、带单位或货币符号的数字 | `DateNum`、`Num` |
+| 人 | `Avatars`（名字的一个字加颜色） |
+| 图片 | `ImageSlot`（有真图传 `src`，没有就留空） |
+| 空状态 | `Empty` |
+| 排列 | `Stack`、`Row`、`Wrap`、`Grow`、`Enter` |
+| 文字输入 | Astryx 的 `TextInput`（属性现查：`npx astryx --dense component TextInput`） |
+
+每个零件的参数写在 `kit/index.tsx` 的注释里，用之前读一下。
+
+规则：
+
+- 每屏最外层是 `<Screen screen="规格里的屏 id">`。
 - 每个能点的东西都要真的做事。空的事件处理函数过不了门禁。
-- 屏幕文件里不写裸 HTML 标签、`style=`、`className`、颜色和尺寸。这些只出现在 `app/ui/` 里。
-- 表单输入、按钮这类行为复杂的控件用 Astryx 的组件。它的属性**现查**：`npx astryx --dense component <Name>`，不要凭记忆写。
-- 做一层“原型皮”：同样的结构和功能，灰度、直角、没有素材，地址加 `?skin=proto` 切换。它用来单独判断结构对不对。写法见 `runs/trip-together/app/ui/ui.css` 末尾。
+- 屏幕文件里不写裸 HTML 标签、`style=`、`className`、颜色和尺寸。
+- **不要给零件另写样式去“调整”它**。觉得样子不对，回第 4 步改答案再重新生成。
+- kit 里确实没有的东西（很少见），才在 `app/ui/` 里自己写一个零件；它的样式只能用 `--k-*` 变量和 Astryx 的刻度，并在交付说明里写明加了什么、为什么。
+- **示例数据要相对“今天”生成**，让用户打开的第一屏有真实内容。第一屏是空状态过不了门禁。
+- 地址加 `?skin=proto` 可以看去掉气质的原型，用来单独判断结构。
 
-## 5 去 Mobbin 查视觉
+## 6 对照细节规则
 
-产物：`style/shots/`、`style/VISUAL.md`
+全文在 `docs/design-details.md`。零件已经替你做到了其中几条（同心圆角、日期分三段、单位小一档、头像用首字、图片位留空），你要自己守住的是：
 
-- 选**一个**气质鲜明的产品，最好取它 3 张以上不同的屏，**下载高清图**（约 1180 像素宽）。阴影、细线、字重这些在预览图里看不出来。
-- 颜色用脚本量，不要目测：`node scripts/palette.mjs runs/<name>`。
-- 在 `style/VISUAL.md` 里写一张表：**从图上读到的 → 怎么落的**，逐条对应。再写一段“没有照搬的”。
-- 结构来自第 2 步的多个产品，样子来自这里的一个产品。两者分开，产出才不会变成某一家的翻版。
-
-## 6 上风格
-
-产物：`theme/theme.ts`、`app/ui/ui.css`
-
-- **规范用 Astryx 的**：间距 `--spacing-*`、圆角 `--radius-*`、字号 `--text-*-size`。`ui.css` 里不出现刻度以外的尺寸。
-- **颜色写进 Astryx 主题**：`theme/theme.ts` 里 `defineTheme`，`name` 固定写 `'app'`。手机上字阶基准用 17、比例 1.2。屏幕里这样引入：
-  ```tsx
-  import {Theme} from '@astryxdesign/core/theme';
-  import '@astryxdesign/core/reset.css';
-  import '@astryxdesign/core/astryx.css';
-  import {appTheme} from '../theme/app';
-  import '../theme/app.css';
-  ```
-  （`theme/app.*` 由门禁在构建前自动生成，不用手写、不进仓库。）
-- **细节规则必须遵守**，全文在 `docs/design-details.md`：
-  - D01 圆角嵌套要同心：里层 = 外层 − 间距
-  - D02 一块东西只用一种方式和背景分开：底色差、阴影、描边三选一
-  - D03 日期分三段排，分隔符小一档
-  - D04 货币符号和单位比数字小一档、基线对齐
-  - D05 粗体是稀缺的：标题只比常规稍重，不用 800 以上
-  - D06 一屏一种字体，衬线和无衬线不混排
-  - D07 有真图用真图，没有就空着，不用表情顶替内容图
-  - D08 头像没有真实的就用首字加颜色；不从网上找真人照片
-- **贴纸**只做小装饰（类型标记、空状态）：`node scripts/sticker.mjs runs/<name> <emoji 名字>…`，名字用 `--find` 查。图源是微软 Fluent Emoji（MIT）。
-- **字体**要随应用打包（`@fontsource/noto-sans-sc`），不依赖手机自带字体。
+- D05 粗体是稀缺的：不要把多个 `Title` 放在一屏；大号文字只给主角。
+- D06 一屏一种字体。
+- D07 没有真图就留空，不用表情顶替内容图。
+- 同一个信息一屏只出现一次；不能点的东西不要做得像按钮。
 
 ## 7 过门禁
 
@@ -118,16 +137,17 @@ app/screens/*.tsx       屏：只组合 app/ui 里的零件和 Astryx 组件
 node scripts/gate-app.mjs runs/<name>
 ```
 
-它会：校验规格 → 检查屏幕源码 → 编译主题 → 构建 → 在 390×844 的浏览器里把每条验收场景点一遍 → 每屏截图并检查溢出、触控目标、对比度、细节规则 → 确认规格里每一屏都被走到。
+它会：校验规格和选择题 → 重新生成样式 → 检查屏幕源码 → 构建 → 确认第一屏有内容 → 在 390×844 的浏览器里把每条验收场景点一遍 → 每屏截图并检查溢出、触控目标、对比度、细节规则 → **量每一屏的容器、圆角、控件、标题粗细，和 `visual.json` 里的答案核对** → 确认规格里每一屏都被走到 → 拼一张“参考 | 产出”的并排图。
 
 - **0 fail 才能交付。**
+- `conform` 报错的意思是：你说参考图是这样的，但你做出来的不是。两条路：做的不对就改界面；答案本身答错了就回第 4 步改答案。**不要为了通过而把答案改成和你做的一样**——答案的依据是参考图，不是你的产出。
 - `detail` 开头的警告对应细节规则，要清零；清不掉的在交付说明里逐条写原因。
-- 截图在 `runs/<name>/out/`。**自己打开看一遍**，和第 5 步的参考图放在一起比。
-- 不要为了通过而改门禁脚本、合同，或者删掉验收脚本里的断言。
+- **打开 `runs/<name>/out/compare.png` 看一遍**：左边是参考，右边是你的产出。放在一起违和的地方，回去改。
+- 不要为了通过而改门禁脚本、合同、kit，或者删掉验收脚本里的断言。
 
 ## 8 写交付说明
 
-产物：`runs/<name>/README.md`，照 `runs/trip-together/README.md` 的写法：
+产物：`runs/<name>/README.md`，照 `runs/fit-booking/README.md` 的写法：
 
 - 怎么打开（`RUN=runs/<name> npx vite`）
 - 它能做什么
@@ -140,8 +160,8 @@ node scripts/gate-app.mjs runs/<name>
 
 - 内容必须是真的；功能必须能用；说“验证过”的必须真的跑过。
 - 参考截图有版权，不进仓库（`.gitignore` 已排除 `refs/shots/` 和 `style/shots/`），只留链接和文字提炼。
-- 结构参考至少 8 个产品；视觉只学一个，并写明没照搬什么。
-- 屏幕不写样式；样式只用 Astryx 的刻度。
+- 结构参考至少 8 个产品；视觉只学一个，并在 `visual.json` 的 `not_copied` 里写明没照搬什么。
+- 你不写样式：样式来自选择题的答案，界面来自 kit 的零件。
 - 不知道的事情写“不知道”，不要编。
 
 ## 已知的边界
@@ -149,4 +169,5 @@ node scripts/gate-app.mjs runs/<name>
 - 产出是手机宽度的 React 网页，不是原生 iOS / Android 工程。
 - 数据存在浏览器本地，没有服务端。
 - 没有图片检索：需要真图时，用你所在环境的搜图工具；没有就把图位留空。
-- 细节规则里 D01、D03、D04 还没有自动检查，靠你自己对照。
+- 选择题只有十来道，描述不了参考图的全部气质（插画、照片、特殊版式都不在里面）。产出会像参考的“骨架和质地”，不会和它一模一样。
+- kit 的零件种类有限。遇到它没有的东西可以自己加，但要写明。

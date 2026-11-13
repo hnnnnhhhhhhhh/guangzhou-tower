@@ -91,6 +91,14 @@ for (const f of [path.join(KIT, 'recipes/recipes.css'), path.join(RUN, 'style/vi
 // ---------- 3 构建 ----------
 let built = false;
 if (!fs.existsSync(path.join(RUN, 'index.html'))) fs.copyFileSync(path.join(KIT, 'templates/index.html'), path.join(RUN, 'index.html'));
+if (fs.existsSync(path.join(RUN, 'style/visual.json'))) {
+  // 样式由选择题的答案生成，保证 app/style.css 和 theme.ts 与 visual.json 一致
+  try {
+    execFileSync('node', [path.join(KIT, 'scripts/style.mjs'), RUN_REL], {cwd: KIT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe']});
+  } catch (e) {
+    report.fail('visual', `样式生成失败：${(e.stderr || e.stdout || e.message).trim().split('\n').slice(0, 4).join(' | ')}`);
+  }
+}
 if (fs.existsSync(path.join(RUN, 'theme/theme.ts'))) {
   // 有主题就先编译：主题写错了在这里就会报
   try {
@@ -113,6 +121,21 @@ const outDir = path.join(RUN, 'out');
 fs.rmSync(outDir, {recursive: true, force: true});
 fs.mkdirSync(outDir, {recursive: true});
 const visited = new Set();
+// 有 style/visual.json 的 run：先校验它，后面每一屏都会拿它核对
+let visual = null;
+const visualFile = path.join(RUN, 'style/visual.json');
+if (fs.existsSync(visualFile)) {
+  const vv = new Ajv({allErrors: true, strict: false}).compile(readJson(path.join(KIT, 'schemas/visual.schema.json')));
+  try {
+    visual = readJson(visualFile);
+    if (!vv(visual)) {
+      for (const e of vv.errors) report.fail('visual', `visual.json${e.instancePath} ${e.message}`);
+      visual = null;
+    } else report.pass('visual', `visual.json 合合同（参考：${visual.source.app}）`);
+  } catch (e) {
+    report.fail('visual', `读不了 style/visual.json：${e.message}`);
+  }
+}
 
 if (built && spec) {
   const dist = path.join(RUN, 'dist');
@@ -130,6 +153,17 @@ if (built && spec) {
   const browser = await chromium.launch();
   const shotOnce = new Set();
 
+  // 第一屏不能是空状态：用户打开看到的第一眼必须有内容
+  {
+    const ctx = await browser.newContext({viewport: VIEWPORT, colorScheme: 'light', locale: 'zh-CN'});
+    const page = await ctx.newPage();
+    await page.clock.install({time: new Date(START)});
+    await page.goto(url);
+    await page.locator('[data-screen]').first().waitFor({timeout: 5000}).catch(() => {});
+    if (await page.locator('[data-k="empty"]').first().isVisible().catch(() => false)) report.fail('first-screen', '打开的第一屏是空状态。示例数据要相对“今天”生成，让第一屏有真实内容');
+    else report.pass('first-screen', '第一屏有内容');
+    await ctx.close();
+  }
   for (const a of spec.acceptance) {
     const file = path.join(RUN, 'acceptance', `${a.id}.mjs`);
     if (!fs.existsSync(file)) continue;
@@ -195,6 +229,48 @@ if (built && spec) {
         }
         return {both: [...new Set(both)].slice(0, 6), bold: total ? bold / total : 0, heavy: total ? heavy / total : 0, serif: total ? serif / total : 0};
       });
+      if (visual) {
+        const got = await page.evaluate((ground) => {
+          const rgb = (c) => (c.match(/[\d.]+/g) ?? []).map(Number);
+          const far = (a, b) => { const x = rgb(a), y = rgb(b); return x.length >= 3 && (x[3] ?? 1) > 0.5 && Math.abs(x[0] - y[0]) + Math.abs(x[1] - y[1]) + Math.abs(x[2] - y[2]) > 24; };
+          const g = `rgb(${parseInt(ground.slice(1, 3), 16)}, ${parseInt(ground.slice(3, 5), 16)}, ${parseInt(ground.slice(5, 7), 16)})`;
+          const bucket = (r, h) => (r <= 1 ? 'square' : r >= h / 2 - 1 || r > 32 ? 'pill' : r <= 8 ? 'small' : r <= 16 ? 'medium' : 'large');
+          const name = (el) => (el.className.toString().split(' ')[0] || el.tagName.toLowerCase()) + (el.textContent ? `「${el.textContent.trim().slice(0, 8)}」` : '');
+          const boxes = [], controls = [];
+          for (const el of document.querySelectorAll('[data-screen] *')) {
+            const r = el.getBoundingClientRect();
+            if (r.width < 4 || r.height < 4) continue;
+            const cs = getComputedStyle(el);
+            const radius = parseFloat(cs.borderTopLeftRadius) || 0;
+            const isControl = el.matches('button, a, input, textarea, [role="button"]') || (el.querySelector(':scope > input, :scope > textarea, :scope > * > input') && r.height <= 80);
+            if (isControl) {
+              // 只看“有形状”的控件：有底色或有描边的
+              const shaped = far(cs.backgroundColor, g) || (parseFloat(cs.borderTopWidth) >= 1 && cs.borderTopStyle !== 'none' && far(cs.borderTopColor, g));
+              if (shaped && r.width >= 60 && r.height >= 32 && !el.closest('[data-k="tabs"]') && !el.matches('.k-avatar, .k-day, .k-cell')) controls.push({name: name(el), bucket: bucket(radius, r.height)});
+              continue;
+            }
+            if (r.width < 160 || r.height < 48 || el.closest('button, a') || el.matches('[data-k="image"], img, svg, nav, main')) continue;
+            const filled = far(cs.backgroundColor, g);
+            const sides = ['Top', 'Right', 'Bottom', 'Left'].filter((s) => parseFloat(cs[`border${s}Width`]) >= 1 && cs[`border${s}Style`] !== 'none' && far(cs[`border${s}Color`], g)).length;
+            const shadow = cs.boxShadow !== 'none' && !cs.boxShadow.includes('inset');
+            if (filled || sides >= 3 || shadow) boxes.push({name: name(el), kind: shadow ? 'shadow' : filled ? 'fill' : 'border', bucket: bucket(radius, r.height)});
+          }
+          const title = document.querySelector('[data-k="title"]');
+          return {boxes, controls, titleWeight: title ? Number(getComputedStyle(title).fontWeight) : null};
+        }, visual.colors.ground);
+        const say = (list) => [...new Set(list.map((x) => x.name))].slice(0, 4).join('、');
+        let bad = 0;
+        if (visual.surface === 'none' && got.boxes.length) (report.fail('conform', `参考图上没有容器（surface: none），但这屏有 ${got.boxes.length} 个带底色、描边或阴影的块：${say(got.boxes)}`, `out/${shot}`), bad++);
+        const wrongKind = got.boxes.filter((b) => visual.surface !== 'none' && b.kind !== visual.surface);
+        if (wrongKind.length) (report.fail('conform', `参考图上的容器是 ${visual.surface}，这屏有 ${wrongKind.length} 个不是：${say(wrongKind)}`, `out/${shot}`), bad++);
+        const wrongR = got.boxes.filter((b) => b.bucket !== visual.radius && !(visual.radius === 'pill' && b.bucket === 'large'));
+        if (wrongR.length) (report.fail('conform', `参考图上容器的圆角是 ${visual.radius}，这屏有 ${wrongR.length} 个不是：${say(wrongR)}（${[...new Set(wrongR.map((b) => b.bucket))].join('/')}）`, `out/${shot}`), bad++);
+        const wrongC = got.controls.filter((b) => b.bucket !== visual.control_radius);
+        if (wrongC.length) (report.fail('conform', `参考图上按钮和输入框的圆角是 ${visual.control_radius}，这屏有 ${wrongC.length} 个不是：${say(wrongC)}（${[...new Set(wrongC.map((b) => b.bucket))].join('/')}）`, `out/${shot}`), bad++);
+        const want = {regular: [300, 450], medium: [451, 650], bold: [651, 900]}[visual.title.weight];
+        if (got.titleWeight && (got.titleWeight < want[0] || got.titleWeight > want[1])) (report.fail('conform', `参考图上标题的粗细是 ${visual.title.weight}，这屏标题的字重是 ${got.titleWeight}`, `out/${shot}`), bad++);
+        if (!bad) report.pass('conform', `${key}：容器、圆角、控件、标题粗细与参考图的读法一致`);
+      }
       if (d.both.length) report.warn('detail', `D02 同一个元素既有描边又有阴影：${d.both.join('、')}`, `out/${shot}`);
       if (d.heavy > 0) report.warn('detail', `D05 用了 800 以上的字重（占可见文字 ${Math.round(d.heavy * 100)}%）`, `out/${shot}`);
       if (d.bold > 0.25) report.warn('detail', `D05 粗体占可见文字 ${Math.round(d.bold * 100)}%，超过四分之一`, `out/${shot}`);
@@ -259,6 +335,19 @@ if (built && spec) {
       report.fail('acceptance', `${a.id} 在「${step}」这一步失败：${String(e.message).split('\n')[0]}`, `acceptance/${a.id}.mjs · 现场截图 out/FAILED-${a.id}.png`);
     }
     await ctx.close();
+  }
+  // 把参考图和产出拼在一起，方便人（和模型自己）并排看
+  const refs = list(path.join(RUN, 'style/shots'), ['.png', '.jpg', '.jpeg', '.webp']).slice(0, 3);
+  // 按走到的先后顺序取前四屏：第一张就是用户打开看到的第一屏
+  const outs = [...shotOnce].filter((k) => !k.startsWith('proto')).slice(0, 4).map((k) => path.join(outDir, `${k}.png`)).filter((f) => fs.existsSync(f));
+  if (refs.length && outs.length) {
+    const page = await browser.newPage({viewport: {width: 1600, height: 900}});
+    const img = (f) => `<img src="data:image/${f.toLowerCase().endsWith('.png') ? 'png' : 'jpeg'};base64,${fs.readFileSync(f).toString('base64')}">`;
+    await page.setContent(`<style>body{margin:0;padding:32px;background:#d9d9de;font:600 22px system-ui;display:flex;gap:48px;align-items:flex-start;width:max-content}section{display:flex;flex-direction:column;gap:16px}div{display:flex;gap:20px}img{height:760px;display:block}</style><section>参考<div>${refs.map(img).join('')}</div></section><section>产出<div>${outs.map(img).join('')}</div></section>`);
+    await page.waitForLoadState('networkidle');
+    await page.screenshot({path: path.join(outDir, 'compare.png'), fullPage: true});
+    await page.close();
+    report.pass('compare', '参考与产出的并排图：out/compare.png（自己打开看一遍）');
   }
   await browser.close();
   server.close();

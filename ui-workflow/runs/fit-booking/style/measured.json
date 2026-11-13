@@ -1,0 +1,81 @@
+{
+  "measured_from": [
+    "equinox-class.png",
+    "equinox-detail.png",
+    "equinox-schedule.png"
+  ],
+  "mode": "dark",
+  "accent_candidates": [
+    {
+      "hex": "#472718",
+      "hue": 20,
+      "seen_in": 1,
+      "of": 3,
+      "area": 0.0007
+    }
+  ],
+  "neutrals": [
+    {
+      "hex": "#FFFFFF",
+      "lum": 1,
+      "area": 0.069
+    },
+    {
+      "hex": "#FEFEFE",
+      "lum": 1,
+      "area": 0.035
+    },
+    {
+      "hex": "#ACB3B9",
+      "lum": 0.7,
+      "area": 0.016
+    },
+    {
+      "hex": "#A5A7AA",
+      "lum": 0.65,
+      "area": 0.016
+    },
+    {
+      "hex": "#424447",
+      "lum": 0.27,
+      "area": 0.033
+    },
+    {
+      "hex": "#363839",
+      "lum": 0.22,
+      "area": 0.023
+    },
+    {
+      "hex": "#272728",
+      "lum": 0.15,
+      "area": 0.033
+    },
+    {
+      "hex": "#252728",
+      "lum": 0.15,
+      "area": 0.018
+    },
+    {
+      "hex": "#151516",
+      "lum": 0.08,
+      "area": 0.782
+    },
+    {
+      "hex": "#151515",
+      "lum": 0.08,
+      "area": 0.137
+    },
+    {
+      "hex": "#010101",
+      "lum": 0,
+      "area": 0.669
+    },
+    {
+      "hex": "#000000",
+      "lum": 0,
+      "area": 0.778
+    }
+  ],
+  "chroma_share": 0.001,
+  "note": "accent_candidates[0] 通常是品牌主色；seen_in 低说明它只在个别屏出现（多半是内容图片，不是 UI 色）。chroma_share 是彩色面积占比：< 0.05 克制，> 0.2 浓烈。字体、圆角、间距量不出来，需要读图判断后写进 DESIGN.md。"
+}

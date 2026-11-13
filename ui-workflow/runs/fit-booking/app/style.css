@@ -1,0 +1,42 @@
+/* 由 scripts/style.mjs 从 style/visual.json 生成，不要手改。要改样子就改 visual.json 再重新生成。
+   参考：Equinox+ */
+:root {
+  --k-ground: #000000;
+  --k-surface: #151516;
+  --k-ink: #FFFFFF;
+  --k-ink2: #A5A7AA;
+  --k-line: color-mix(in srgb, #FFFFFF 16%, #000000);
+  --k-faint: color-mix(in srgb, #FFFFFF 9%, #000000);
+  --k-accent: #FFFFFF;
+  --k-on-accent: #000000;
+  --k-good: #5fd08a;
+  --k-warn: #f2b84b;
+  --k-bad: #ff7b72;
+
+  --k-radius: var(--radius-container);
+  --k-radius-ctl: var(--radius-element);
+  --k-card-bg: transparent;
+  --k-card-border: 0 solid transparent;
+  --k-card-shadow: none;
+  --k-card-pad: 0px;
+  /* D01 同心：容器里的小块 = 容器圆角 − 内边距，最小为 0 */
+  --k-radius-inner: max(0px, calc(var(--k-radius) - var(--k-card-pad)));
+
+  --k-gap-item: var(--spacing-5);
+  --k-gap-section: var(--spacing-10);
+  --k-row-pad: var(--spacing-5);
+
+  --k-title-size: var(--text-display-3-size);
+  --k-title-weight: 500;
+  --k-heading-weight: 600;
+  --k-label-spacing: 0.14em;
+  --k-label-transform: uppercase;
+  --k-label-size: 0.6875rem;
+
+  --k-btn-bg: #FFFFFF;
+  --k-btn-fg: #000000;
+  --k-btn-border: transparent;
+  --k-sel-bg: #FFFFFF;
+  --k-sel-fg: #000000;
+  --k-sel-line: transparent;
+}

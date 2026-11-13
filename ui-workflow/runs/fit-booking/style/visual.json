@@ -1,0 +1,32 @@
+{
+  "source": {"app": "Equinox+", "shots": ["equinox-class.png", "equinox-schedule.png", "equinox-detail.png"]},
+  "mode": "dark",
+  "colors": {"ground": "#000000", "surface": "#151516", "ink": "#FFFFFF", "ink2": "#A5A7AA", "accent": "#FFFFFF", "on_accent": "#000000"},
+  "surface": "none",
+  "radius": "square",
+  "control_radius": "square",
+  "divider": "hairline",
+  "button": "solid",
+  "selected": "invert",
+  "density": "airy",
+  "title": {"size": "large", "weight": "medium"},
+  "label": "caps-spaced",
+  "imagery": "photo-led",
+  "imagery_available": false,
+  "evidence": {
+    "surface": "equinox-detail：Member ratings、Equipment、Instructor 三段之间只有留白和一条横线，没有任何底色块或边框",
+    "radius": "equinox-class：顶部照片和 Begin Class 按钮的四个角都是尖的",
+    "control_radius": "equinox-schedule：底部 Add to Jun 12 是直角的白色长条",
+    "divider": "equinox-detail：每一段下面有一条贯穿的细横线",
+    "button": "equinox-class：Begin Class 是整块白底黑字；旁边的 Add to Cal 才是描边",
+    "selected": "equinox-schedule：今天 12 是一个白色方块、黑色数字，其余日期只是数字",
+    "density": "equinox-detail：一屏只有四段内容，段间留白很大",
+    "title": "equinox-class：课程名比正文大很多，但只是稍粗，不是粗黑体",
+    "label": "equinox-class：ON-DEMAND 很小、全大写、字距拉开",
+    "imagery": "equinox-class：照片占了上面三分之一，是画面的主角"
+  },
+  "not_copied": [
+    "顶部的大照片：拿不到真实的课程照片，没有做图片位，也没有用表情顶替。这是和参考差距最大的一处",
+    "教练的圆形头像照片：没有真实头像，用名字的一个字加颜色"
+  ]
+}

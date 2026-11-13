@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Visual reading — 对着参考图做的一组选择题（第 5 步产物）。每题只能选给定的选项，并指出依据",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source", "mode", "colors", "surface", "radius", "control_radius", "divider", "button", "selected", "density", "title", "label", "imagery", "evidence"],
+  "properties": {
+    "source": {
+      "type": "object", "additionalProperties": false, "required": ["app", "shots"],
+      "properties": {"app": {"type": "string"}, "links": {"type": "array", "items": {"type": "string"}}, "shots": {"type": "array", "minItems": 1, "items": {"type": "string"}, "description": "style/shots/ 下的文件名"}}
+    },
+    "mode": {"enum": ["light", "dark"], "description": "页面底色是亮的还是暗的"},
+    "colors": {
+      "type": "object", "additionalProperties": false, "required": ["ground", "surface", "ink", "ink2", "accent", "on_accent"],
+      "description": "用 scripts/palette.mjs 量出来的值，不要目测。全部写成 #RRGGBB",
+      "properties": {
+        "ground": {"$ref": "#/definitions/hex", "description": "页面底色"},
+        "surface": {"$ref": "#/definitions/hex", "description": "分组容器的底色；没有容器就写和 ground 最接近的那个次级底色"},
+        "ink": {"$ref": "#/definitions/hex", "description": "主要文字"},
+        "ink2": {"$ref": "#/definitions/hex", "description": "次要文字"},
+        "accent": {"$ref": "#/definitions/hex", "description": "主按钮的底色"},
+        "on_accent": {"$ref": "#/definitions/hex", "description": "主按钮上的文字颜色"}
+      }
+    },
+    "surface": {"enum": ["none", "fill", "border", "shadow"], "description": "一组内容靠什么和页面分开：none=不用容器，只靠留白和细线；fill=一块底色；border=一圈描边；shadow=阴影"},
+    "radius": {"enum": ["square", "small", "medium", "large", "pill"], "description": "容器和图片的圆角：square=直角；small≈4–8；medium≈12–16；large≈20–32；pill=圆到像胶囊"},
+    "control_radius": {"enum": ["square", "small", "medium", "pill"], "description": "按钮和输入框的圆角"},
+    "divider": {"enum": ["hairline", "none"], "description": "区与区、行与行之间有没有细线"},
+    "button": {"enum": ["solid", "outline"], "description": "主按钮是实心块还是只有描边"},
+    "selected": {"enum": ["invert", "accent", "underline"], "description": "选中的日期 / 标签长什么样：invert=反色块（深底变浅块或反之）；accent=强调色块；underline=下划线"},
+    "density": {"enum": ["airy", "regular", "compact"], "description": "airy=首屏只有三四块内容、留白很多；compact=首屏十行以上"},
+    "title": {
+      "type": "object", "additionalProperties": false, "required": ["size", "weight"],
+      "properties": {"size": {"enum": ["medium", "large"]}, "weight": {"enum": ["regular", "medium", "bold"], "description": "页面最大的标题有多粗。拿不准选 medium"}}
+    },
+    "label": {"enum": ["plain", "caps-spaced"], "description": "分类小标签的样子：caps-spaced=很小、字距拉开（英文是全大写）"},
+    "imagery": {"enum": ["photo-led", "thumbnails", "none"], "description": "photo-led=大图是画面主角；thumbnails=列表里有小图；none=几乎没有图"},
+    "imagery_available": {"type": "boolean", "description": "你能不能拿到真实图片。photo-led 而又拿不到图时，产出会和参考差很多，要在交付说明里写明"},
+    "evidence": {
+      "type": "object",
+      "description": "每一题的依据：哪张图的哪个位置。键是题目名",
+      "required": ["surface", "radius", "control_radius", "divider", "button", "selected"],
+      "additionalProperties": {"type": "string", "minLength": 6}
+    },
+    "not_copied": {"type": "array", "items": {"type": "string"}, "description": "参考里有、但这次没有照搬的东西，以及原因"}
+  },
+  "definitions": {"hex": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}}
+}
