@@ -22,7 +22,7 @@
    - 中途退出
 8. **把每条场景写成脚本** `acceptance/<id>.mjs`。脚本拿到一个 `t`：
    `t.screen(id)` 断言在哪一屏 · `t.tap(按钮文字)` · `t.see(文字或正则)` · `t.notSee(文字)` · `t.count(文字)` · `t.reload()` · `t.nextDay(n)` 把日期往后拨。
-   参考写法：`runs/pte-vocab/acceptance/`。
+   参考写法：`runs/trip-together/acceptance/`。
 
 ## 实现时
 
